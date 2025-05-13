@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DocScan</string>
+    <string name="splash_description">Effortlessly scan, enhance, and share documents with advanced editing and ML-powered cleaning.</string>
+    <string name="content_description">contentDescription</string>
 </resources>

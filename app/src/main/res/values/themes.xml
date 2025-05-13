@@ -1,17 +1,20 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Theme.DocScan" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.DocScan" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/lightGrey</item>
-        <item name="colorPrimaryVariant">@color/darkGreyBg</item>
-        <item name="colorOnPrimary">@color/darkGreyBg</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorOnPrimary">@color/color_on_primary</item>
 
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/lightGrey</item>
-        <item name="android:navigationBarColor">@color/lightGrey</item>
-        
+        <item name="colorSecondary">@color/color_secondary</item>
+        <item name="colorOnSecondary">@color/color_on_secondary</item>
 
     </style>
 
+    <style name="SplashScreenTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/color_primary</item>
+        <item name="windowSplashScreenAnimationDuration">5000</item>
+        <item name="postSplashScreenTheme">@style/Theme.DocScan</item>
+
+    </style>
 
 </resources>
