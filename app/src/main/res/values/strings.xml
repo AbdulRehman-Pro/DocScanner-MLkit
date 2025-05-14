@@ -2,4 +2,16 @@
     <string name="app_name">DocScan</string>
     <string name="splash_description">Effortlessly scan, enhance, and share documents with advanced editing and ML-powered cleaning.</string>
     <string name="content_description">contentDescription</string>
+
+    <string name="explore">Explore</string>
+    <string name="setting">Setting</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home">Home</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="description">Capture a clear image of your document for optimal scanning results. Ensure the document is well-lit and fully within the frame.</string>
+    <string name="upload_images_or">Upload images, or ‎ </string>
+    <string name="browse">Browse</string>
+    <string name="upload_desc">Take the photo from directly above, upload only one photo.</string>
 </resources>
