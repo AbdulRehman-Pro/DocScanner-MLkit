@@ -18,7 +18,6 @@ android {
     }
 
     signingConfigs {
-
         // Go to Gradle.properties and set RELEASE_STORE_FILE, RELEASE_STORE_PASSWORD, RELEASE_KEY_ALIAS, RELEASE_KEY_PASSWORD.
         create("release") {
             // Add signing related keys e.g; storeFile, storePassword, keyAlias, keyPassword.
@@ -58,6 +57,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -81,6 +81,7 @@ dependencies {
     // Responsive
     implementation(libs.sdp.android)
     implementation(libs.ssp.android)
+
 
     // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
