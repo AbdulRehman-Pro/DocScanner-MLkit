@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:background="@color/color_primary"
     tools:context=".ui.mainScreen.MainActivity">
 
@@ -51,11 +52,11 @@
         app:backgroundTint="@color/color_primary_variant"
         app:compatShadowEnabled="true"
         app:itemActiveIndicatorStyle="@style/Theme.BottomNavigationView.ActiveIndicator"
-        app:itemIconTint="@color/icon_colors"
         app:itemHorizontalTranslationEnabled="true"
+        app:itemIconTint="@color/icon_colors"
         app:itemRippleColor="@null"
-        app:itemTextAppearanceActiveBoldEnabled="false"
         app:itemTextAppearanceActive="@style/Theme.BottomNavigationView.ActiveText"
+        app:itemTextAppearanceActiveBoldEnabled="false"
         app:itemTextAppearanceInactive="@style/Theme.BottomNavigationView.InactiveText"
         app:itemTextColor="@color/text_colors"
         app:layout_constraintBottom_toBottomOf="parent"

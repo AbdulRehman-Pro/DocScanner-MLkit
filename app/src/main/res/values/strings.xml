@@ -14,4 +14,11 @@
     <string name="upload_images_or">Upload images, or ‎ </string>
     <string name="browse">Browse</string>
     <string name="upload_desc">Take the photo from directly above, upload only one photo.</string>
+    <string name="scan_mode">Scan Mode</string>
+    <string name="select_mode">Select mode:</string>
+    <string name="set_limit_for_images">Set Limit for Images</string>
+    <string name="version">App Version: %1$s</string>
+    <string name="select_limit">Select limit:</string>
+    <string name="import_from_gallery">Import from Gallery</string>
+    <string name="play_store_desc">Love this app? Explore more smart tools and innovative apps by the developer.\n\nClick here to visit our Play Store and discover more!</string>
 </resources>

@@ -40,4 +40,22 @@
         <item name="android:fontFamily">@font/roboto</item>
     </style>
 
+
+    <style name="SwitchStyle" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="thumbTint">@color/thumb_icon</item>
+        <item name="trackTint">@color/track_tint</item>
+
+    </style>
+
+
+    <style name="RadioButtonStyle" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/color_on_primary</item>
+        <item name="colorControlActivated">@color/color_secondary</item>
+    </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+    </style>
+
 </resources>

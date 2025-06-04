@@ -12,10 +12,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.rehman.docscan.R
 import com.rehman.docscan.core.Utils.showCustomSnackBar
-import com.rehman.docscan.core.Utils.showSnackBar
 import com.rehman.docscan.databinding.ActivityMainBinding
+import com.rehman.docscan.interfaces.SnackBarListener
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SnackBarListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -63,8 +63,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         doubleBackToExitPressedOnce = true
 
-//                        binding.root.showSnackBar("Press BACK again to exit", binding.bottomNavigationView)
-                        showCustomSnackBar("Press BACK again to exit", binding.bottomNavigationView)
+                        showSnackBar("Press BACK again to exit")
 
                         handler.postDelayed({
                             doubleBackToExitPressedOnce = false
@@ -80,5 +79,14 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
         super.onDestroy()
+    }
+
+    override fun showSnackBar(
+        message: String,
+        backgroundColor: Int,
+        textColor: Int,
+        duration: Long
+    ) {
+        this.showCustomSnackBar(message, binding.bottomNavigationView, backgroundColor, textColor,  duration)
     }
 }

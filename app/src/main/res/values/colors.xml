@@ -15,4 +15,7 @@
     <color name="color_text_primary">#FFFFFF</color>
     <color name="color_text_secondary">#C4C7C5</color>
 
+    <!-- Error Colors -->
+    <color name="color_error">#E57373</color>
+
 </resources>
