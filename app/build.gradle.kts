@@ -94,5 +94,14 @@ dependencies {
     implementation(libs.glide)
     annotationProcessor(libs.compiler)
 
+    // Swipe refresh layout
+    implementation(libs.androidx.swiperefreshlayout)
+
+    //Image Viewer
+    implementation(libs.stfalconimageviewer)
+
+    // Play store in app update
+    implementation(libs.app.update.ktx)
+
 
 }

@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.rehman.docscan.R
 import com.rehman.docscan.core.Utils.showCustomSnackBar
 import com.rehman.docscan.databinding.ActivityMainBinding
@@ -22,6 +24,10 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
     private var doubleBackToExitPressedOnce = false
     private val handler = Handler(Looper.getMainLooper())
 
+
+    private var appUpdateManager: AppUpdateManager? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
@@ -30,6 +36,8 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         )
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        appUpdateManager = AppUpdateManagerFactory.create(this)
 
         initBottomNav()
         handleBackPress()

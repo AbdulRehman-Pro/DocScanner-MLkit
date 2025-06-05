@@ -148,15 +148,15 @@ class HomeFragment : Fragment() {
                         if (pages.size > 1) {
                             callback?.showSnackBar(
                                 "Images saved successfully.",
-                                R.color.color_primary_variant,
-                                R.color.color_text_primary,
+                                R.color.color_on_primary,
+                                R.color.color_on_secondary,
                                 2000L
                             )
                         } else {
                             callback?.showSnackBar(
                                 "Image saved successfully.",
-                                R.color.color_primary_variant,
-                                R.color.color_text_primary,
+                                R.color.color_on_primary,
+                                R.color.color_on_secondary,
                                 2000L
                             )
                         }
@@ -167,7 +167,7 @@ class HomeFragment : Fragment() {
 
 
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            Log.wtf("Scanner", "Scan Result -> Cancelled...")
+            Log.e("Scanner", "Scan Result -> Cancelled...")
             callback?.showSnackBar(
                 "Cancelled...",
                 R.color.color_error,
@@ -176,7 +176,7 @@ class HomeFragment : Fragment() {
             )
 
         } else {
-            Log.wtf("Scanner", "Scan Result -> Failed...")
+            Log.e("Scanner", "Scan Result -> Failed...")
         }
     }
 
@@ -184,14 +184,14 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        when (Prefs.getScanMode()) {
-            R.id.basicModeRadio -> selectedMode = BASIC_MODE
-            R.id.basicModeFilterRadio -> selectedMode = BASIC_MODE_WITH_FILTER
-            R.id.advanceModeRadio -> selectedMode = FULL_MODE
+        when (Prefs.getScanMode(requireContext())) {
+            getString(R.string.basic_mode) -> selectedMode = BASIC_MODE
+            getString(R.string.basic_mode_with_filters) -> selectedMode = BASIC_MODE_WITH_FILTER
+            getString(R.string.advance_mode) -> selectedMode = FULL_MODE
         }
-        when (Prefs.getImageLimit()) {
-            R.id.singleModeRadio -> selectedPage = SINGLE_PAGE
-            R.id.burstModeRadio -> selectedPage = MULTI_PAGE
+        when (Prefs.getImageLimit(requireContext())) {
+            getString(R.string.single_mode) -> selectedPage = SINGLE_PAGE
+            getString(R.string.burst_mode) -> selectedPage = MULTI_PAGE
         }
         isGalleryImport = Prefs.getImportFromGallery()
 
