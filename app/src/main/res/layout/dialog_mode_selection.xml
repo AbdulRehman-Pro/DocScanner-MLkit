@@ -48,6 +48,7 @@
             android:paddingTop="@dimen/_10sdp"
             android:paddingEnd="0dp"
             android:paddingBottom="@dimen/_10sdp"
+            android:pointerIcon="copy"
             android:textColor="@color/color_text_primary"
             android:theme="@style/RadioButtonStyle" />
 

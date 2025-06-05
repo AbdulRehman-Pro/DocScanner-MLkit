@@ -1,9 +1,9 @@
 package com.rehman.docscan.ui.mainScreen.navigation
 
-import android.animation.LayoutTransition
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.app.Dialog
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -11,25 +11,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
-import android.widget.ImageView
+import android.widget.RadioButton
 import android.widget.Toast
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import com.rehman.docscan.R
-import com.rehman.docscan.core.Utils.getAppVersion
-import com.rehman.docscan.databinding.FragmentSettingBinding
-import androidx.core.view.isVisible
-import androidx.transition.AutoTransition
-import androidx.transition.TransitionManager
-import androidx.core.view.isGone
-import com.rehman.docscan.core.Prefs
-import com.rehman.docscan.core.Utils
-import com.rehman.docscan.core.Utils.enableTransition
-import com.rehman.docscan.core.Utils.toggleCardDetails
-import com.rehman.docscan.databinding.DialogModeSelectionBinding
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.fragment.app.Fragment
+import com.google.android.material.card.MaterialCardView
+import com.rehman.docscan.R
+import com.rehman.docscan.core.Prefs
+import com.rehman.docscan.core.Utils
+import com.rehman.docscan.core.Utils.enableTransition
+import com.rehman.docscan.core.Utils.getAppVersion
+import com.rehman.docscan.core.Utils.openPlayStoreDevPage
+import com.rehman.docscan.core.Utils.toggleCardDetails
+import com.rehman.docscan.databinding.DialogModeSelectionBinding
+import com.rehman.docscan.databinding.FragmentSettingBinding
 
 class SettingFragment : Fragment() {
 
@@ -54,28 +53,16 @@ class SettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        binding.versionName.text = getString(R.string.version, getAppVersion(requireContext()))
-
-        Utils.applyCustomColor(
-            requireContext(),
-            binding.playStoreDesc,
-            requireContext().getString(R.string.play_store_desc),
-            14
-        )
-
-        binding.versionCard.setOnClickListener {
-            Toast.makeText(requireContext(), "v", Toast.LENGTH_SHORT).show()
-        }
-
         binding.containerLayout.enableTransition()
 
         binding.scanModeCard.setOnClickListener {
+            getPrefDetails()
             toggleCardDetails(binding.scanModeCardDetail, binding.scanModeArrow)
 
         }
 
         binding.scanLimitCard.setOnClickListener {
+            getPrefDetails()
             toggleCardDetails(binding.scanLimitDetails, binding.scanLimitArrow)
         }
 
@@ -92,24 +79,67 @@ class SettingFragment : Fragment() {
         }
 
 
+        binding.versionName.text = getString(R.string.version, getAppVersion(requireContext()))
 
+        Utils.applyCustomColor(
+            requireContext(),
+            binding.playStoreDesc,
+            requireContext().getString(R.string.play_store_desc),
+            14
+        )
+
+        val startColor = ContextCompat.getColor(requireContext(), R.color.color_secondary)
+        val endColor = ContextCompat.getColor(requireContext(), R.color.color_primary)
+        binding.versionCard.animateStrokeColorLoop(startColor, endColor)
+
+        binding.versionCard.setOnClickListener {
+            requireContext().openPlayStoreDevPage("Abdul-Rehman")
+        }
 
 
     }
 
     private fun getPrefDetails() {
-        when (Prefs.getScanMode()) {
-            R.id.basicModeRadio -> binding.scanModeText.text = "Basic Mode"
-            R.id.basicModeFilterRadio -> binding.scanModeText.text = "Basic Mode with Filters"
-            R.id.advanceModeRadio -> binding.scanModeText.text = "Advance Mode"
+        when (Prefs.getScanMode(requireContext())) {
+            getString(R.string.basic_mode) -> binding.scanModeText.text =
+                getString(R.string.basic_mode)
+
+            getString(R.string.basic_mode_with_filters) -> binding.scanModeText.text =
+                getString(R.string.basic_mode_with_filters)
+
+            getString(R.string.advance_mode) -> binding.scanModeText.text =
+                getString(R.string.advance_mode)
         }
 
-        when (Prefs.getImageLimit()) {
-            R.id.singleModeRadio -> binding.limitModeText.text = "Single Mode"
-            R.id.burstModeRadio -> binding.limitModeText.text = "Burst Mode"
+        when (Prefs.getImageLimit(requireContext())) {
+            getString(R.string.single_mode) -> binding.limitModeText.text =
+                getString(R.string.single_mode)
+
+            getString(R.string.burst_mode) -> binding.limitModeText.text =
+                getString(R.string.burst_mode)
         }
 
         binding.importSwitch.isChecked = Prefs.getImportFromGallery()
+    }
+
+    private fun MaterialCardView.animateStrokeColorLoop(
+        @ColorInt colorStart: Int,
+        @ColorInt colorEnd: Int,
+        duration: Long = 1000L
+    ): ValueAnimator {
+        val animator = ValueAnimator.ofObject(ArgbEvaluator(), colorStart, colorEnd).apply {
+            this.duration = duration
+            repeatMode = ValueAnimator.REVERSE
+            repeatCount = ValueAnimator.INFINITE
+
+            addUpdateListener { animation ->
+                val color = animation.animatedValue as Int
+                this@animateStrokeColorLoop.strokeColor = color
+            }
+
+            start()
+        }
+        return animator
     }
 
 
@@ -119,6 +149,13 @@ class SettingFragment : Fragment() {
         val dialogBinding = DialogModeSelectionBinding.inflate(layoutInflater)
         dialog.setContentView(dialogBinding.root)
 
+        if (!Utils.IS_PREMIUM){
+            dialogBinding.advanceModeRadio.alpha = 0.5f
+            dialogBinding.burstModeRadio.alpha = 0.5f
+        }else{
+            dialogBinding.advanceModeRadio.alpha = 1f
+            dialogBinding.burstModeRadio.alpha = 1f
+        }
 
         if (type == "limit") {
             dialogBinding.limitRadioGroup.visibility = View.VISIBLE
@@ -126,31 +163,48 @@ class SettingFragment : Fragment() {
             Utils.applyCustomFontAndColor(
                 requireContext(),
                 dialogBinding.singleModeRadio,
-                "Single mode\nTake one focused picture at a time.",
+                "${getString(R.string.single_mode)}\nTake one focused picture at a time.",
                 11
             )
             Utils.applyCustomFontAndColor(
                 requireContext(),
                 dialogBinding.burstModeRadio,
-                "Burst Mode\nMultiple pictures seamlessly for rapid scanning.",
+                "${getString(R.string.burst_mode)}\nMultiple pictures seamlessly for rapid scanning.",
                 10
             )
 
 
-            when (Prefs.getImageLimit()) {
-                R.id.singleModeRadio -> dialogBinding.singleModeRadio.isChecked = true
-                R.id.burstModeRadio -> dialogBinding.burstModeRadio.isChecked = true
+            when (Prefs.getImageLimit(requireContext())) {
+                getString(R.string.single_mode) -> dialogBinding.singleModeRadio.isChecked = true
+                getString(R.string.burst_mode) -> dialogBinding.burstModeRadio.isChecked = true
             }
 
-            dialogBinding.limitRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-                Prefs.setImageLimit(checkedId)
-                when (checkedId) {
-                    R.id.singleModeRadio -> binding.limitModeText.text = "Single Mode"
-                    R.id.burstModeRadio -> binding.limitModeText.text = "Burst Mode"
+            dialogBinding.limitRadioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
+
+                val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
+
+                if (checkedId == R.id.burstModeRadio) {
+                    if (!Utils.IS_PREMIUM) {
+                        Toast.makeText(requireContext(), "${getString(R.string.burst_mode)} is available for premium users only.", Toast.LENGTH_SHORT).show()
+                       dialogBinding.advanceModeRadio.isChecked = false
+                        dialog.dismiss()
+                        return@setOnCheckedChangeListener // Exit early, don't dismiss
+                    } else {
+                        val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
+                        val title = selectedText.substringBefore("\n")
+                        Prefs.setImageLimit(title)
+                        binding.limitModeText.text = title
+                        dialog.dismiss()
+                    }
+                } else {
+                    val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
+                    val title = selectedText.substringBefore("\n")
+                    Prefs.setImageLimit(title)
+                    binding.limitModeText.text = title
+                    dialog.dismiss()
                 }
-
-                dialog.dismiss()
             }
+
 
         } else {
             dialogBinding.limitRadioGroup.visibility = View.GONE
@@ -159,36 +213,55 @@ class SettingFragment : Fragment() {
             Utils.applyCustomFontAndColor(
                 requireContext(),
                 dialogBinding.basicModeRadio,
-                "Basic Mode\nBasic editing (crop, rotate, reorder pages).",
+                "${getString(R.string.basic_mode)}\nBasic editing (crop, rotate, reorder pages).",
                 10
             )
             Utils.applyCustomFontAndColor(
                 requireContext(),
                 dialogBinding.basicModeFilterRadio,
-                "Basic Mode with Filters\nAdds image filters (grayscale, enhancement).",
+                "${getString(R.string.basic_mode_with_filters)}\nAdds image filters (grayscale, enhancement).",
                 23
             )
             Utils.applyCustomFontAndColor(
                 requireContext(),
                 dialogBinding.advanceModeRadio,
-                "Advance Mode\nML-enabled cleaning (erase stains, fingers) and future major features.",
+                "${getString(R.string.advance_mode)}\nML-enabled cleaning (erase stains, fingers) and future major features.",
                 12
             )
 
-            when (Prefs.getScanMode()) {
-                R.id.basicModeRadio -> dialogBinding.basicModeRadio.isChecked = true
-                R.id.basicModeFilterRadio -> dialogBinding.basicModeFilterRadio.isChecked = true
-                R.id.advanceModeRadio -> dialogBinding.advanceModeRadio.isChecked = true
+            when (Prefs.getScanMode(requireContext())) {
+                getString(R.string.basic_mode) -> dialogBinding.basicModeRadio.isChecked = true
+                getString(R.string.basic_mode_with_filters) -> dialogBinding.basicModeFilterRadio.isChecked =
+                    true
+
+                getString(R.string.advance_mode) -> dialogBinding.advanceModeRadio.isChecked = true
             }
 
-            dialogBinding.modeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-                Prefs.setScanMode(checkedId)
-                when (checkedId) {
-                    R.id.basicModeRadio -> binding.scanModeText.text = "Basic Mode"
-                    R.id.basicModeFilterRadio -> binding.scanModeText.text = "Basic Mode with Filters"
-                    R.id.advanceModeRadio -> binding.scanModeText.text = "Advance Mode"
+            dialogBinding.modeRadioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
+
+
+                val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
+
+                if (checkedId == R.id.advanceModeRadio) {
+                    if (!Utils.IS_PREMIUM) {
+                        Toast.makeText(requireContext(), "${getString(R.string.advance_mode)} is available for premium users only.", Toast.LENGTH_SHORT).show()
+                        dialogBinding.advanceModeRadio.isChecked = false
+                        dialog.dismiss()
+                        return@setOnCheckedChangeListener // Exit early, don't dismiss
+                    } else {
+                        val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
+                        val title = selectedText.substringBefore("\n")
+                        Prefs.setScanMode(title)
+                        binding.scanModeText.text = title
+                        dialog.dismiss()
+                    }
+                } else {
+                    val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
+                    val title = selectedText.substringBefore("\n")
+                    Prefs.setScanMode(title)
+                    binding.scanModeText.text = title
+                    dialog.dismiss()
                 }
-                dialog.dismiss()
             }
         }
 
@@ -207,15 +280,13 @@ class SettingFragment : Fragment() {
 
             WindowInsetsControllerCompat(this, this.decorView).let { controller ->
                 controller.hide(WindowInsetsCompat.Type.systemBars())
-                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                controller.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
-
 
 
         }
     }
-
-
 
 
 }

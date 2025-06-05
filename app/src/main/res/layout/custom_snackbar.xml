@@ -16,6 +16,6 @@
         android:layout_weight="1"
         android:fontFamily="@font/roboto_bold"
         android:maxLines="3"
-        android:textColor="@color/color_primary"
+        android:textColor="@color/color_on_secondary"
         android:textSize="@dimen/_12ssp" />
 </LinearLayout>

@@ -3,10 +3,12 @@ package com.rehman.docscan.core
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.rehman.docscan.R
 
 object Prefs {
 
     private var _sharedPrefs: SharedPreferences? = null
+
 
     private val sharedPrefs: SharedPreferences
         get() = _sharedPrefs ?: throw IllegalStateException(
@@ -20,27 +22,27 @@ object Prefs {
     }
 
     // Scan Mode Preferences
-    fun setScanMode(scanModeId: Int) {
-        sharedPrefs.edit() { putInt("scanModeId", scanModeId) }
+    fun setScanMode(scanMode: String) {
+        sharedPrefs.edit() { putString("scanMode", scanMode) }
     }
 
-    fun getScanMode(): Int = sharedPrefs.getInt("scanModeId", -1)
+    fun getScanMode(context: Context): String = sharedPrefs.getString("scanMode", context.getString(R.string.basic_mode)).toString()
 
     fun removeScanMode() {
-        sharedPrefs.edit() { remove("scanModeId") }
+        sharedPrefs.edit() { remove("scanMode") }
     }
 
 
     // Image Limit Preferences
-    fun setImageLimit(scanModeId: Int) {
-       sharedPrefs.edit() { putInt("imageLimitId", scanModeId) }
+    fun setImageLimit(imageLimit: String) {
+       sharedPrefs.edit() { putString("imageLimit", imageLimit) }
     }
 
-    fun getImageLimit(): Int = sharedPrefs.getInt("imageLimitId", -1)
+    fun getImageLimit(context: Context): String = sharedPrefs.getString("imageLimit", context.getString(R.string.single_mode)).toString()
 
 
     fun removeImageLimit(context: Context) {
-        sharedPrefs.edit() { remove("imageLimitId") }
+        sharedPrefs.edit() { remove("imageLimit") }
     }
 
 
