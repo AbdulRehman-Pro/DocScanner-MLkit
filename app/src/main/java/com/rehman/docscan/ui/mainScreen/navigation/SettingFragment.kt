@@ -21,6 +21,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.card.MaterialCardView
 import com.rehman.docscan.R
+import com.rehman.docscan.core.InAppUpdateUtils
 import com.rehman.docscan.core.Prefs
 import com.rehman.docscan.core.Utils
 import com.rehman.docscan.core.Utils.enableTransition
@@ -28,6 +29,7 @@ import com.rehman.docscan.core.Utils.getAppVersion
 import com.rehman.docscan.core.Utils.openPlayStoreDevPage
 import com.rehman.docscan.core.Utils.toggleCardDetails
 import com.rehman.docscan.databinding.DialogModeSelectionBinding
+import com.rehman.docscan.databinding.DialogPremiumBinding
 import com.rehman.docscan.databinding.FragmentSettingBinding
 
 class SettingFragment : Fragment() {
@@ -120,6 +122,9 @@ class SettingFragment : Fragment() {
         }
 
         binding.importSwitch.isChecked = Prefs.getImportFromGallery()
+
+        binding.updateTag.visibility =
+            if (InAppUpdateUtils.UPDATE_AVAILABLE) View.VISIBLE else View.GONE
     }
 
     private fun MaterialCardView.animateStrokeColorLoop(
@@ -144,147 +149,176 @@ class SettingFragment : Fragment() {
 
 
     private fun openDialog(type: String) {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val dialogBinding = DialogModeSelectionBinding.inflate(layoutInflater)
-        dialog.setContentView(dialogBinding.root)
+        Dialog(requireContext()).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            val dialogBinding = DialogModeSelectionBinding.inflate(layoutInflater)
+            setContentView(dialogBinding.root)
 
-        if (!Utils.IS_PREMIUM){
-            dialogBinding.advanceModeRadio.alpha = 0.5f
-            dialogBinding.burstModeRadio.alpha = 0.5f
-        }else{
-            dialogBinding.advanceModeRadio.alpha = 1f
-            dialogBinding.burstModeRadio.alpha = 1f
-        }
-
-        if (type == "limit") {
-            dialogBinding.limitRadioGroup.visibility = View.VISIBLE
-            dialogBinding.modeRadioGroup.visibility = View.GONE
-            Utils.applyCustomFontAndColor(
-                requireContext(),
-                dialogBinding.singleModeRadio,
-                "${getString(R.string.single_mode)}\nTake one focused picture at a time.",
-                11
-            )
-            Utils.applyCustomFontAndColor(
-                requireContext(),
-                dialogBinding.burstModeRadio,
-                "${getString(R.string.burst_mode)}\nMultiple pictures seamlessly for rapid scanning.",
-                10
-            )
-
-
-            when (Prefs.getImageLimit(requireContext())) {
-                getString(R.string.single_mode) -> dialogBinding.singleModeRadio.isChecked = true
-                getString(R.string.burst_mode) -> dialogBinding.burstModeRadio.isChecked = true
+            if (!Utils.IS_PREMIUM) {
+                dialogBinding.advanceModeRadio.alpha = 0.5f
+                dialogBinding.burstModeRadio.alpha = 0.5f
+            } else {
+                dialogBinding.advanceModeRadio.alpha = 1f
+                dialogBinding.burstModeRadio.alpha = 1f
             }
 
-            dialogBinding.limitRadioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
+            if (type == "limit") {
+                dialogBinding.limitRadioGroup.visibility = View.VISIBLE
+                dialogBinding.modeRadioGroup.visibility = View.GONE
+                Utils.applyCustomFontAndColor(
+                    requireContext(),
+                    dialogBinding.singleModeRadio,
+                    "${getString(R.string.single_mode)}\nTake one focused picture at a time.",
+                    11
+                )
+                Utils.applyCustomFontAndColor(
+                    requireContext(),
+                    dialogBinding.burstModeRadio,
+                    "${getString(R.string.burst_mode)}\nMultiple pictures seamlessly for rapid scanning.",
+                    10
+                )
 
-                val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
 
-                if (checkedId == R.id.burstModeRadio) {
-                    if (!Utils.IS_PREMIUM) {
-                        Toast.makeText(requireContext(), "${getString(R.string.burst_mode)} is available for premium users only.", Toast.LENGTH_SHORT).show()
-                       dialogBinding.advanceModeRadio.isChecked = false
-                        dialog.dismiss()
-                        return@setOnCheckedChangeListener // Exit early, don't dismiss
+                when (Prefs.getImageLimit(requireContext())) {
+                    getString(R.string.single_mode) -> dialogBinding.singleModeRadio.isChecked = true
+                    getString(R.string.burst_mode) -> dialogBinding.burstModeRadio.isChecked = true
+                }
+
+                dialogBinding.limitRadioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
+
+                    val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
+
+                    if (checkedId == R.id.burstModeRadio) {
+                        if (!Utils.IS_PREMIUM) {
+                            showPremiumDialog()
+                            dialogBinding.advanceModeRadio.isChecked = false
+                            dismiss()
+                            return@setOnCheckedChangeListener // Exit early, don't dismiss
+                        } else {
+                            val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
+                            val title = selectedText.substringBefore("\n")
+                            Prefs.setImageLimit(title)
+                            binding.limitModeText.text = title
+                            dismiss()
+                        }
                     } else {
                         val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
                         val title = selectedText.substringBefore("\n")
                         Prefs.setImageLimit(title)
                         binding.limitModeText.text = title
-                        dialog.dismiss()
+                        dismiss()
                     }
-                } else {
-                    val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
-                    val title = selectedText.substringBefore("\n")
-                    Prefs.setImageLimit(title)
-                    binding.limitModeText.text = title
-                    dialog.dismiss()
                 }
+
+
             }
+            else {
+                dialogBinding.limitRadioGroup.visibility = View.GONE
+                dialogBinding.modeRadioGroup.visibility = View.VISIBLE
+
+                Utils.applyCustomFontAndColor(
+                    requireContext(),
+                    dialogBinding.basicModeRadio,
+                    "${getString(R.string.basic_mode)}\nBasic editing (crop, rotate, reorder pages).",
+                    10
+                )
+                Utils.applyCustomFontAndColor(
+                    requireContext(),
+                    dialogBinding.basicModeFilterRadio,
+                    "${getString(R.string.basic_mode_with_filters)}\nAdds image filters (grayscale, enhancement).",
+                    23
+                )
+                Utils.applyCustomFontAndColor(
+                    requireContext(),
+                    dialogBinding.advanceModeRadio,
+                    "${getString(R.string.advance_mode)}\nML-enabled cleaning (erase stains, fingers) and future major features.",
+                    12
+                )
+
+                when (Prefs.getScanMode(requireContext())) {
+                    getString(R.string.basic_mode) -> dialogBinding.basicModeRadio.isChecked = true
+                    getString(R.string.basic_mode_with_filters) -> dialogBinding.basicModeFilterRadio.isChecked =
+                        true
+
+                    getString(R.string.advance_mode) -> dialogBinding.advanceModeRadio.isChecked = true
+                }
+
+                dialogBinding.modeRadioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
 
 
-        } else {
-            dialogBinding.limitRadioGroup.visibility = View.GONE
-            dialogBinding.modeRadioGroup.visibility = View.VISIBLE
+                    val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
 
-            Utils.applyCustomFontAndColor(
-                requireContext(),
-                dialogBinding.basicModeRadio,
-                "${getString(R.string.basic_mode)}\nBasic editing (crop, rotate, reorder pages).",
-                10
-            )
-            Utils.applyCustomFontAndColor(
-                requireContext(),
-                dialogBinding.basicModeFilterRadio,
-                "${getString(R.string.basic_mode_with_filters)}\nAdds image filters (grayscale, enhancement).",
-                23
-            )
-            Utils.applyCustomFontAndColor(
-                requireContext(),
-                dialogBinding.advanceModeRadio,
-                "${getString(R.string.advance_mode)}\nML-enabled cleaning (erase stains, fingers) and future major features.",
-                12
-            )
-
-            when (Prefs.getScanMode(requireContext())) {
-                getString(R.string.basic_mode) -> dialogBinding.basicModeRadio.isChecked = true
-                getString(R.string.basic_mode_with_filters) -> dialogBinding.basicModeFilterRadio.isChecked =
-                    true
-
-                getString(R.string.advance_mode) -> dialogBinding.advanceModeRadio.isChecked = true
-            }
-
-            dialogBinding.modeRadioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
-
-
-                val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
-
-                if (checkedId == R.id.advanceModeRadio) {
-                    if (!Utils.IS_PREMIUM) {
-                        Toast.makeText(requireContext(), "${getString(R.string.advance_mode)} is available for premium users only.", Toast.LENGTH_SHORT).show()
-                        dialogBinding.advanceModeRadio.isChecked = false
-                        dialog.dismiss()
-                        return@setOnCheckedChangeListener // Exit early, don't dismiss
+                    if (checkedId == R.id.advanceModeRadio) {
+                        if (!Utils.IS_PREMIUM) {
+                            showPremiumDialog()
+                            dialogBinding.advanceModeRadio.isChecked = false
+                            dismiss()
+                            return@setOnCheckedChangeListener // Exit early, don't dismiss
+                        } else {
+                            val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
+                            val title = selectedText.substringBefore("\n")
+                            Prefs.setScanMode(title)
+                            binding.scanModeText.text = title
+                            dismiss()
+                        }
                     } else {
                         val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
                         val title = selectedText.substringBefore("\n")
                         Prefs.setScanMode(title)
                         binding.scanModeText.text = title
-                        dialog.dismiss()
+                        dismiss()
                     }
-                } else {
-                    val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
-                    val title = selectedText.substringBefore("\n")
-                    Prefs.setScanMode(title)
-                    binding.scanModeText.text = title
-                    dialog.dismiss()
                 }
             }
+
+            window?.apply {
+                setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+                setDimAmount(0.8F)
+                attributes.windowAnimations = R.style.DialogAnimation
+                setGravity(Gravity.BOTTOM)
+                addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+                // Ensure visibility flags are set
+
+                WindowInsetsControllerCompat(this, this.decorView).let { controller ->
+                    controller.hide(WindowInsetsCompat.Type.systemBars())
+                    controller.systemBarsBehavior =
+                        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                }
+
+
+            }
+            show()
         }
 
+    }
+
+    private fun showPremiumDialog() {
+        Dialog(requireContext()).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            val binding = DialogPremiumBinding.inflate(layoutInflater)
+            setContentView(binding.root)
 
 
-        dialog.show()
-        dialog.window?.apply {
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-            setDimAmount(0.8F)
-            attributes.windowAnimations = R.style.DialogAnimation
-            setGravity(Gravity.BOTTOM)
-            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
-            // Ensure visibility flags are set
+            window?.apply {
+                setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+                setDimAmount(0.8F)
+                attributes.windowAnimations = R.style.DialogAnimation
+                setGravity(Gravity.BOTTOM)
+                addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
-            WindowInsetsControllerCompat(this, this.decorView).let { controller ->
-                controller.hide(WindowInsetsCompat.Type.systemBars())
-                controller.systemBarsBehavior =
-                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+                WindowInsetsControllerCompat(this, this.decorView).let { controller ->
+                    controller.hide(WindowInsetsCompat.Type.systemBars())
+                    controller.systemBarsBehavior =
+                        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                }
             }
 
-
+            show()
         }
     }
 

@@ -6,13 +6,13 @@ import android.os.Looper
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.rehman.docscan.R
+import com.rehman.docscan.core.InAppUpdateUtils
 import com.rehman.docscan.core.Utils.showCustomSnackBar
 import com.rehman.docscan.databinding.ActivityMainBinding
 import com.rehman.docscan.interfaces.SnackBarListener
@@ -24,8 +24,12 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
     private var doubleBackToExitPressedOnce = false
     private val handler = Handler(Looper.getMainLooper())
 
-
-    private var appUpdateManager: AppUpdateManager? = null
+    private lateinit var updateUtils: InAppUpdateUtils
+    private val updateLauncher = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        updateUtils.onActivityResult(result.resultCode)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +41,8 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        appUpdateManager = AppUpdateManagerFactory.create(this)
+        // Initialize the In-App Update utils
+        updateUtils = InAppUpdateUtils(this, updateLauncher)
 
         initBottomNav()
         handleBackPress()
@@ -51,16 +56,37 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
 
+        // Use the item ID you assigned in menu
+        val settingsBadge = binding.bottomNavigationView.getOrCreateBadge(R.id.settingFragment)
+        if (InAppUpdateUtils.UPDATE_AVAILABLE){
+            settingsBadge.isVisible = InAppUpdateUtils.UPDATE_AVAILABLE
+            settingsBadge.backgroundColor = getColor(R.color.color_secondary)
+            settingsBadge.badgeTextColor = getColor(R.color.color_secondary)
+            settingsBadge.number = 0
+        }else{
+            binding.bottomNavigationView.removeBadge(R.id.settingFragment)
+        }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.homeFragment -> binding.titleAppBar.text = getString(R.string.app_name)
-                R.id.exploreFragment -> binding.titleAppBar.text = getString(R.string.explore)
-                R.id.settingFragment -> binding.titleAppBar.text = getString(R.string.setting)
+                R.id.homeFragment -> {
+                    binding.titleAppBar.text = getString(R.string.app_name)
+                    settingsBadge.isVisible = true
+                }
+                R.id.exploreFragment -> {
+                    binding.titleAppBar.text = getString(R.string.explore)
+                    settingsBadge.isVisible = true
+                }
+                R.id.settingFragment -> {
+                    binding.titleAppBar.text = getString(R.string.setting)
+                    settingsBadge.isVisible = false
+                }
             }
         }
-    }
 
+
+
+    }
 
     private fun handleBackPress() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -82,6 +108,20 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Check for updates when the fragment resumed
+        updateUtils.checkUpdateFlow()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // Unregister the listener when the fragment is paused
+        updateUtils.unregister()
     }
 
     override fun onDestroy() {

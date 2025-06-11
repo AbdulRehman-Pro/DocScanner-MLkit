@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@drawable/dialog_mode_bg"
+    android:orientation="vertical">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationView"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_80sdp"
+        android:layout_gravity="center_horizontal"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/premium" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/roboto_bold"
+        android:text="Unlock Premium Access"
+        android:textColor="@color/color_text_primary"
+        android:textSize="@dimen/_16sdp" />
+
+    <!--
+        android:text="This feature is part of our premium experience. You can unlock it forever or use your earned coins for temporary access.\nDon’t have enough coins?\nWatch a short video to earn more."
+-->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:fontFamily="@font/roboto"
+        android:text="Coming Soon..."
+        android:textAlignment="center"
+        android:textColor="@color/color_text_secondary"
+        android:textSize="@dimen/_10sdp" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Available coin: 5"
+        android:textAlignment="center"
+        android:textColor="@color/color_on_primary"
+        android:textSize="@dimen/_12sdp"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="@dimen/_40sdp"
+        android:layout_marginVertical="@dimen/_20sdp"
+        android:background="@color/color_on_primary" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:background="@drawable/pro_golden_bg"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_minus45sdp"
+            android:alpha="0.2"
+            android:rotation="345"
+            android:src="@drawable/ic_crown"
+            app:tint="@color/color_on_primary" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/goView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_10sdp"
+            app:cardBackgroundColor="@color/color_on_primary"
+            app:cardCornerRadius="@dimen/_30sdp"
+            app:cardElevation="0dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:fontFamily="@font/roboto_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="GO"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/_20ssp" />
+        </androidx.cardview.widget.CardView>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_toStartOf="@id/goView">
+
+            <TextView
+                android:id="@+id/proTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Unlock All Features"
+                android:textColor="@color/color_text_primary"
+                android:textSize="@dimen/_16sdp" />
+
+            <View
+                android:id="@+id/proView"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_below="@id/proTitle"
+                android:layout_alignEnd="@id/proTitle"
+                android:layout_alignParentStart="true"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:alpha="0.8"
+                android:background="@color/color_on_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/proView"
+                android:alpha="0.8"
+                android:fontFamily="@font/roboto"
+                android:text="Gain lifetime access"
+                android:textColor="@color/color_text_primary"
+                android:textSize="@dimen/_10sdp" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:background="@drawable/ad_blue_bg"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_minus45sdp"
+            android:alpha="0.2"
+            android:rotation="345"
+            android:src="@drawable/ic_play"
+            app:tint="@color/color_on_primary" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/goAdView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_10sdp"
+            app:cardBackgroundColor="@color/color_on_primary"
+            app:cardCornerRadius="@dimen/_30sdp"
+            app:cardElevation="0dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:fontFamily="@font/roboto_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="WATCH"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/_20ssp" />
+        </androidx.cardview.widget.CardView>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_toStartOf="@id/goAdView">
+
+            <TextView
+                android:id="@+id/adTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Continue with Coins"
+                android:textColor="@color/color_text_primary"
+                android:textSize="@dimen/_16sdp" />
+
+            <View
+                android:id="@+id/adView"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_below="@id/adTitle"
+                android:layout_alignEnd="@id/adTitle"
+                android:layout_alignParentStart="true"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:alpha="0.8"
+                android:background="@color/color_on_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/adView"
+                android:alpha="0.8"
+                android:fontFamily="@font/roboto"
+                android:text="Use 3 coins for temporary access"
+                android:textColor="@color/color_text_primary"
+                android:textSize="@dimen/_10sdp" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</LinearLayout>

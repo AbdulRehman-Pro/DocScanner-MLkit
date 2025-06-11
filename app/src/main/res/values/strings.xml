@@ -28,4 +28,11 @@
     <string name="advance_mode">Advance Mode</string>
     <string name="single_mode">Single Mode</string>
     <string name="burst_mode">Burst Mode</string>
+    <string name="downloading_title">Downloading update…</string>
+    <string name="downloading_description">A new version of the app is being downloaded. You can continue using the app while the update completes.</string>
+    <string name="downloading_button">Continue in background</string>
+    <string name="downloaded_title">Update ready to install</string>
+    <string name="downloaded_description">The latest version has been downloaded. Restart the app now to complete the update.</string>
+    <string name="downloaded_button">Restart now</string>
+    <string name="update_tag">New Update</string>
 </resources>
