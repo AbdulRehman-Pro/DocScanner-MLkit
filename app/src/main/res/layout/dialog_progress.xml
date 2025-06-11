@@ -1,46 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:animateLayoutChanges="true"
+    android:layout_gravity="center"
     android:background="@drawable/dialog_progress_bg"
     android:orientation="vertical">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
         android:layout_gravity="center"
-        app:tint="@color/color_secondary"
         android:layout_marginTop="@dimen/_15sdp"
         android:contentDescription="@string/content_description"
-        android:src="@drawable/ic_update" />
+        android:src="@drawable/ic_update"
+        app:tint="@color/color_secondary" />
 
 
     <TextView
         android:id="@+id/dialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_10sdp"
-        android:fontFamily="@font/roboto_bold"
-        android:text="Downloading Update..."
-        android:layout_marginVertical="@dimen/_10sdp"
         android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/_10sdp"
+        android:fontFamily="@font/roboto_bold"
         android:textColor="@color/color_text_primary"
-        android:textSize="@dimen/_12sdp" />
+        android:textSize="@dimen/_14sdp" />
 
     <TextView
         android:id="@+id/dialogDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
+        android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="@dimen/_10sdp"
         android:fontFamily="@font/roboto"
-        android:text="Some dummy text here needs to be replaced with the actual text respective to state."
-        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
         android:textColor="@color/color_text_secondary"
-        android:textSize="@dimen/_10sdp" />
+        android:textSize="@dimen/_12sdp" />
 
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/dialogProgress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:indeterminate="true"
+        app:indicatorColor="@color/color_secondary"
+        app:indicatorTrackGapSize="@dimen/_5sdp"
+        app:trackColor="@color/color_secondary_semi"
+        app:trackCornerRadius="@dimen/_100sdp"
+        app:trackStopIndicatorSize="@dimen/_5sdp"
+        app:trackThickness="@dimen/_5sdp" />
+
+
+    <Button
+        android:id="@+id/dialogButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginVertical="@dimen/_10sdp"
+        android:backgroundTint="@color/color_secondary"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/color_primary_variant" />
 
 
 </LinearLayout>

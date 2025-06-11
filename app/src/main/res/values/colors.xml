@@ -9,6 +9,7 @@
 
     <!-- Accent Colors -->
     <color name="color_secondary">#A9C7FD</color>
+    <color name="color_secondary_semi">#65A9C7FD</color>
     <color name="color_on_secondary">#000000</color>
 
     <!-- Text Colors -->
