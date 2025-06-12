@@ -30,6 +30,21 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
+      - name: Cache Android Build
+        uses: actions/cache@v4
+        with:
+          path: app/build
+          key: build-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            build-${{ runner.os }}-
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.DOCSCAN_KEYSTORE_64 }}" | base64 --decode > docscan_keystore.jks
+          
+      - name: Verify Keystore File
+        run: ls -la docscan_keystore.jks
+
       - name: Grant Execute Permission for Gradle
         run: chmod +x gradlew
 
@@ -40,7 +55,11 @@ jobs:
           versionCode: ${{ github.run_number }}
 
       - name: Assemble Release Bundle
-        run: ./gradlew bundleRelease
+        run: |
+          export KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+          export KEY_ALIAS=${{ secrets.DOCSCAN_ALIAS }}
+          export KEY_PASSWORD=${{ secrets.DOCSCAN_ALIAS_PASSWORD }}
+          ./gradlew clean assembleRelease
 
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
