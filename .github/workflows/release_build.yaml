@@ -21,7 +21,7 @@ jobs:
           cache: 'gradle'
 
       - name: Cache Gradle Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -30,10 +30,33 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
-      - name: Cache Android Build
-        uses: actions/cache@v3
+      - name: Grant Execute Permission for Gradle
+        run: chmod +x gradlew
+
+      - name: Version Bump
+        uses: chkfung/android-version-actions@v1.2.3
         with:
-          path: app/build
-          key: build-${{ runner.os }}-${{ github.sha }}
-          restore-keys: |
-            build-${{ runner.os }}-
+          gradlePath: app/build.gradle.kts
+          versionCode: ${{ github.run_number }}
+
+      - name: Assemble Release Bundle
+        run: ./gradlew bundleRelease
+
+      - name: Sign Release
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/release
+          signingKeyBase64: ${{ secrets.DOCSCAN_KEYSTORE_64 }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          alias: ${{ secrets.DOCSCAN_ALIAS }}
+          keyPassword: ${{ secrets.DOCSCAN_ALIAS_PASSWORD }}
+
+      - name: Deploy bundle to Google Play
+        uses: r0adkll/upload-google-play@v1.1.3
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_AUTH_JSON_PLAIN_TEXT }}
+          packageName: com.rehman.docscan
+          releaseFiles: app/release/app-release.aab
+          track: internal
+          status: completed
+          whatsNewDirectory: distribution/whatsNew
