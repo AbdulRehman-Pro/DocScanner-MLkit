@@ -20,24 +20,6 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Cache Gradle Dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
-
-      - name: Cache Android Build
-        uses: actions/cache@v4
-        with:
-          path: app/build
-          key: build-${{ runner.os }}-${{ github.sha }}
-          restore-keys: |
-            build-${{ runner.os }}-
-
       - name: Decode Keystore
         run: |
           echo "${{ secrets.DOCSCAN_KEYSTORE_64 }}" | base64 --decode > docscan_keystore.jks
@@ -49,7 +31,6 @@ jobs:
         uses: chkfung/android-version-actions@v1.2.3
         with:
           gradlePath: app/build.gradle.kts
-          versionCode: ${{ github.run_number }}
 
       - name: Assemble Release Bundle
         run: |
