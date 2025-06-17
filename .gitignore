@@ -35,3 +35,6 @@ app/release/
 
 # Android Profiling
 *.hprof
+
+#Kotlin
+.kotlin/
