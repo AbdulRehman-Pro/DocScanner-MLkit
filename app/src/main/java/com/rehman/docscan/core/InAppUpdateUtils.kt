@@ -241,7 +241,7 @@ class InAppUpdateUtils(
 
     companion object {
         private const val TAG = "InAppUpdateUtils"
-        private const val HIGH_PRIORITY = 5
+        private const val HIGH_PRIORITY = 4
         var UPDATE_AVAILABLE = false
     }
 }
