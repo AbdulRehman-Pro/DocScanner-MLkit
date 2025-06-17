@@ -64,7 +64,7 @@ jobs:
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/release
+          releaseDirectory: app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.DOCSCAN_KEYSTORE_64 }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           alias: ${{ secrets.DOCSCAN_ALIAS }}
@@ -75,7 +75,7 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_AUTH_JSON_PLAIN_TEXT }}
           packageName: com.rehman.docscan
-          releaseFiles: app/release/app-release.aab
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
           track: internal
           status: completed
           whatsNewDirectory: distribution/whatsNew
