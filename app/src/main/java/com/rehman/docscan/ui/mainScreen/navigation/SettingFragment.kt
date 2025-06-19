@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.RadioButton
-import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
@@ -24,8 +23,10 @@ import com.rehman.docscan.R
 import com.rehman.docscan.core.InAppUpdateUtils
 import com.rehman.docscan.core.Prefs
 import com.rehman.docscan.core.Utils
+import com.rehman.docscan.core.Utils.applyCustomColor
 import com.rehman.docscan.core.Utils.enableTransition
 import com.rehman.docscan.core.Utils.getAppVersion
+import com.rehman.docscan.core.Utils.openPlayStoreAppPage
 import com.rehman.docscan.core.Utils.openPlayStoreDevPage
 import com.rehman.docscan.core.Utils.toggleCardDetails
 import com.rehman.docscan.databinding.DialogModeSelectionBinding
@@ -83,19 +84,33 @@ class SettingFragment : Fragment() {
 
         binding.versionName.text = getString(R.string.version, getAppVersion(requireContext()))
 
-        Utils.applyCustomColor(
-            requireContext(),
-            binding.playStoreDesc,
-            requireContext().getString(R.string.play_store_desc),
-            14
-        )
+        if (InAppUpdateUtils.UPDATE_AVAILABLE) {
+            val boldStart =
+                requireContext().getString(R.string.play_store_update_desc).indexOf("Tap here")
+            val boldEnd = requireContext().getString(R.string.play_store_update_desc).length
+            binding.playStoreDesc.applyCustomColor(
+                requireContext().getString(R.string.play_store_update_desc),
+                boldTextLengthStart = boldStart,
+                boldTextLengthEnd = boldStart + 8
+            )
+        } else {
+            binding.playStoreDesc.applyCustomColor(
+                requireContext().getString(R.string.play_store_desc),
+                boldTextLengthEnd = 14
+            )
+        }
+
 
         val startColor = ContextCompat.getColor(requireContext(), R.color.color_secondary)
         val endColor = ContextCompat.getColor(requireContext(), R.color.color_primary)
         binding.versionCard.animateStrokeColorLoop(startColor, endColor)
 
         binding.versionCard.setOnClickListener {
-            requireContext().openPlayStoreDevPage("Abdul-Rehman")
+            if (InAppUpdateUtils.UPDATE_AVAILABLE) {
+                requireContext().openPlayStoreAppPage()
+            } else {
+                requireContext().openPlayStoreDevPage()
+            }
         }
 
 
@@ -180,7 +195,9 @@ class SettingFragment : Fragment() {
 
 
                 when (Prefs.getImageLimit(requireContext())) {
-                    getString(R.string.single_mode) -> dialogBinding.singleModeRadio.isChecked = true
+                    getString(R.string.single_mode) -> dialogBinding.singleModeRadio.isChecked =
+                        true
+
                     getString(R.string.burst_mode) -> dialogBinding.burstModeRadio.isChecked = true
                 }
 
@@ -211,8 +228,7 @@ class SettingFragment : Fragment() {
                 }
 
 
-            }
-            else {
+            } else {
                 dialogBinding.limitRadioGroup.visibility = View.GONE
                 dialogBinding.modeRadioGroup.visibility = View.VISIBLE
 
@@ -240,7 +256,8 @@ class SettingFragment : Fragment() {
                     getString(R.string.basic_mode_with_filters) -> dialogBinding.basicModeFilterRadio.isChecked =
                         true
 
-                    getString(R.string.advance_mode) -> dialogBinding.advanceModeRadio.isChecked = true
+                    getString(R.string.advance_mode) -> dialogBinding.advanceModeRadio.isChecked =
+                        true
                 }
 
                 dialogBinding.modeRadioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->

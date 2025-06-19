@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 
+    <queries>
+        <!-- Allow querying Play Store -->
+        <package android:name="com.android.vending" />
+    </queries>
+
+
     <application
         android:name=".App"
         android:allowBackup="true"

@@ -37,7 +37,7 @@ class InAppUpdateUtils(
 
     private var dialog: Dialog? = null
 
-    fun checkUpdateFlow() {
+    fun checkUpdateFlow(onStatusChecked: (() -> Unit)? = null) {
         appUpdateManager.appUpdateInfo
             .addOnSuccessListener { info ->
                 when {
@@ -57,10 +57,12 @@ class InAppUpdateUtils(
                         "No update action needed. Status=${info.updateAvailability()}"
                     )
                 }
+                onStatusChecked?.invoke()
             }
             .addOnFailureListener {
                 Log.e(TAG, "Failed fetching update info: ${it.localizedMessage}")
                 retryOrAbort()
+                onStatusChecked?.invoke()
             }
     }
 

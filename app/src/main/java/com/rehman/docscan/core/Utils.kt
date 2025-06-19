@@ -25,6 +25,7 @@ import android.text.TextPaint
 import android.text.style.ForegroundColorSpan
 import android.text.style.MetricAffectingSpan
 import android.text.style.RelativeSizeSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,6 +47,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import androidx.core.net.toUri
+import androidx.core.os.BuildCompat
+import com.rehman.docscan.BuildConfig
 
 
 object Utils {
@@ -131,7 +134,12 @@ object Utils {
             @Suppress("DEPRECATION")
             packageInfo.versionCode.toLong()
         }
-        return "$versionName-$versionCode"
+
+        return (if (BuildConfig.DEBUG) {
+            "$versionName ($versionCode)"  // Show code in debug
+        } else {
+            versionName  // Clean version for production users
+        }).toString()
     }
 
 
@@ -181,50 +189,67 @@ object Utils {
         }
     }
 
-    fun applyCustomColor(
-        context: Context,
-        textView: TextView,
+    fun TextView.applyCustomColor(
         text: String,
-        boldTextLength: Int,
+        boldTextLengthStart: Int = 0,
+        boldTextLengthEnd: Int
     ) {
-
-        // Define the text with different styles
         val spannableString = SpannableString(text)
 
-        // Apply bold style to "Burst Mode" and set its font to Roboto Bold
+        // Bold style (custom font)
         spannableString.setSpan(
             CustomTypefaceSpan(ResourcesCompat.getFont(context, R.font.roboto_medium)!!),
-            0,
-            boldTextLength,
+            boldTextLengthStart,
+            boldTextLengthEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
+        // Regular style for other parts
+        if (boldTextLengthStart > 0) {
+            spannableString.setSpan(
+                CustomTypefaceSpan(ResourcesCompat.getFont(context, R.font.roboto)!!),
+                0,
+                boldTextLengthStart,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        if (boldTextLengthEnd < text.length) {
+            spannableString.setSpan(
+                CustomTypefaceSpan(ResourcesCompat.getFont(context, R.font.roboto)!!),
+                boldTextLengthEnd,
+                text.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
 
+        // Colors
         spannableString.setSpan(
-            CustomTypefaceSpan(ResourcesCompat.getFont(context, R.font.roboto)!!),
-            boldTextLength + 1,
-            text.length,
+            ForegroundColorSpan(context.getColor(R.color.color_secondary)),
+            boldTextLengthStart,
+            boldTextLengthEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
+        if (boldTextLengthStart > 0) {
+            spannableString.setSpan(
+                ForegroundColorSpan(context.getColor(R.color.color_text_secondary)),
+                0,
+                boldTextLengthStart,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        if (boldTextLengthEnd < text.length) {
+            spannableString.setSpan(
+                ForegroundColorSpan(context.getColor(R.color.color_text_secondary)),
+                boldTextLengthEnd,
+                text.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
 
-        // Apply color
-        val blueColorSpan = ForegroundColorSpan(context.getColor(R.color.color_secondary))
-        val greyColorSpan = ForegroundColorSpan(context.getColor(R.color.color_text_secondary))
-        spannableString.setSpan(blueColorSpan, 0, boldTextLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(
-            greyColorSpan,
-            boldTextLength + 1,
-            text.length,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-
-
-
-        // Set the text with styles to the RadioButton
-        textView.text = spannableString
+        this.text = spannableString
     }
+
 
      fun applyCustomFontAndColor(
         context: Context,
@@ -486,7 +511,10 @@ object Utils {
         }
     }
 
-    fun Context.openPlayStoreDevPage(developerId: String) {
+    fun Context.openPlayStoreDevPage() {
+
+        val developerId = "Abdul-Rehman"
+
         val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
             data = "market://developer?id=$developerId".toUri()
             setPackage("com.android.vending")
@@ -497,11 +525,33 @@ object Utils {
         }
 
         try {
+            Log.d("PlayStoreIntent", "Trying Play Store Intent: ${playStoreIntent.data}")
             startActivity(playStoreIntent)
         } catch (e: ActivityNotFoundException) {
+            Log.w("PlayStoreIntent", "Play Store not found, falling back to web: ${webIntent.data}")
             startActivity(webIntent)
         }
     }
+
+    fun Context.openPlayStoreAppPage() {
+        val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = "market://details?id=${this@openPlayStoreAppPage.packageName}".toUri()
+            setPackage("com.android.vending")
+        }
+
+        val webIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = "https://play.google.com/store/apps/details?id=${this@openPlayStoreAppPage.packageName}".toUri()
+        }
+
+        try {
+            Log.d("PlayStoreIntent", "Trying Play Store Intent: ${playStoreIntent.data}")
+            startActivity(playStoreIntent)
+        } catch (e: ActivityNotFoundException) {
+            Log.w("PlayStoreIntent", "Play Store not found, falling back to web: ${webIntent.data}")
+            startActivity(webIntent)
+        }
+    }
+
 
 
 }

@@ -22,6 +22,7 @@
     <string name="select_limit">Select limit:</string>
     <string name="import_from_gallery">Import from Gallery</string>
     <string name="play_store_desc">Love this app? Explore more smart tools and innovative apps by the developer.\n\nClick here to visit our Play Store and discover more!</string>
+    <string name="play_store_update_desc">Experience the latest features, performance improvements, and bug fixes.\n\nTap here to update the app now on the Play Store!</string>
     <string name="unknown">Unknown</string>
     <string name="basic_mode">Basic Mode</string>
     <string name="basic_mode_with_filters">Basic Mode with Filters</string>
