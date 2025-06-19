@@ -13,8 +13,10 @@ android {
         applicationId = "com.rehman.docscan"
         minSdk = 24
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 4
+        versionName = "1.0.3"
+
+        // Update what's new notes in distribution/whatsNew/whatsnew-en-US
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -1,20 +1,13 @@
 package com.rehman.docscan.ui.mainScreen
 
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.Gravity
-import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -50,7 +43,11 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         setContentView(binding.root)
 
         // Initialize the In-App Update utils
-        updateUtils = InAppUpdateUtils(this, updateLauncher)
+        updateUtils = InAppUpdateUtils(
+            activity = this,
+            resultLauncher = updateLauncher,
+            flexibleThresholdDays = 0
+        )
 
         initBottomNav()
         handleBackPress()
@@ -64,37 +61,40 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        // Use the item ID you assigned in menu
-        val settingsBadge = binding.bottomNavigationView.getOrCreateBadge(R.id.settingFragment)
-        if (InAppUpdateUtils.UPDATE_AVAILABLE){
-            settingsBadge.isVisible = InAppUpdateUtils.UPDATE_AVAILABLE
-            settingsBadge.backgroundColor = getColor(R.color.color_secondary)
-            settingsBadge.badgeTextColor = getColor(R.color.color_secondary)
-            settingsBadge.number = 0
-        }else{
-            binding.bottomNavigationView.removeBadge(R.id.settingFragment)
-        }
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.homeFragment -> {
                     binding.titleAppBar.text = getString(R.string.app_name)
-                    settingsBadge.isVisible = true
+                    updateSettingsBadge()
                 }
+
                 R.id.exploreFragment -> {
                     binding.titleAppBar.text = getString(R.string.explore)
-                    settingsBadge.isVisible = true
+                    updateSettingsBadge()
                 }
+
                 R.id.settingFragment -> {
                     binding.titleAppBar.text = getString(R.string.setting)
-                    settingsBadge.isVisible = false
+                    binding.bottomNavigationView.removeBadge(R.id.settingFragment)
                 }
             }
         }
 
 
-
     }
+
+    private fun updateSettingsBadge() {
+        val settingsBadge = binding.bottomNavigationView.getOrCreateBadge(R.id.settingFragment)
+        if (InAppUpdateUtils.UPDATE_AVAILABLE) {
+            settingsBadge.isVisible = true
+            settingsBadge.backgroundColor = getColor(R.color.color_secondary)
+            settingsBadge.badgeTextColor = getColor(R.color.color_secondary)
+            settingsBadge.number = 0
+        } else {
+            binding.bottomNavigationView.removeBadge(R.id.settingFragment)
+        }
+    }
+
 
     private fun handleBackPress() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -122,7 +122,9 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         super.onResume()
 
         // Check for updates when the fragment resumed
-        updateUtils.checkUpdateFlow()
+        updateUtils.checkUpdateFlow {
+            updateSettingsBadge()
+        }
     }
 
     override fun onStop() {
@@ -143,6 +145,12 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         textColor: Int,
         duration: Long
     ) {
-        this.showCustomSnackBar(message, binding.bottomNavigationView, backgroundColor, textColor,  duration)
+        this.showCustomSnackBar(
+            message,
+            binding.bottomNavigationView,
+            backgroundColor,
+            textColor,
+            duration
+        )
     }
 }
