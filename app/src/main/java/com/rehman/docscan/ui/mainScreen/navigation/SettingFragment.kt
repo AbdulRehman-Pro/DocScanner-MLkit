@@ -87,7 +87,7 @@ class SettingFragment : Fragment() {
         if (InAppUpdateUtils.UPDATE_AVAILABLE) {
             val boldStart =
                 requireContext().getString(R.string.play_store_update_desc).indexOf("Tap here")
-            val boldEnd = requireContext().getString(R.string.play_store_update_desc).length
+
             binding.playStoreDesc.applyCustomColor(
                 requireContext().getString(R.string.play_store_update_desc),
                 boldTextLengthStart = boldStart,
