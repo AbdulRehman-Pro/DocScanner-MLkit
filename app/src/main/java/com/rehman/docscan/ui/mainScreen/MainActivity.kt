@@ -46,8 +46,12 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         updateUtils = InAppUpdateUtils(
             activity = this,
             resultLauncher = updateLauncher,
+            snackBarListener = this,
             flexibleThresholdDays = 0
         )
+        updateUtils.checkUpdateFlow {
+            updateSettingsBadge()
+        }
 
         initBottomNav()
         handleBackPress()
@@ -116,15 +120,6 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
                 }
             }
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        // Check for updates when the fragment resumed
-        updateUtils.checkUpdateFlow {
-            updateSettingsBadge()
-        }
     }
 
     override fun onStop() {
