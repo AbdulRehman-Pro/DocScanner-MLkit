@@ -29,7 +29,8 @@ class InAppUpdateUtils(
     private val flexibleThresholdDays: Int = 2,
     private val immediateThresholdDays: Int = 7,
     private val maxRetry: Int = 3
-) : LifecycleObserver {
+) : LifecycleObserver
+{
 
     private val appUpdateManager = AppUpdateManagerFactory.create(activity)
     private var listener: InstallStateUpdatedListener? = null
@@ -111,13 +112,22 @@ class InAppUpdateUtils(
     }
 
     fun onActivityResult(resultCode: Int) {
-        if (resultCode != Activity.RESULT_OK) {
-            Log.w(TAG, "Update failed or cancelled: code=$resultCode")
-            retryOrAbort()
-        } else {
-            retries = 0
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                retries = 0
+                Log.i(TAG, "Update completed successfully")
+            }
+            Activity.RESULT_CANCELED -> {
+                Log.i(TAG, "User canceled the update")
+                UPDATE_AVAILABLE = false  // Prevent immediate re-trigger
+            }
+            else -> {
+                Log.w(TAG, "Unknown result code: $resultCode")
+                retryOrAbort()
+            }
         }
     }
+
 
     private fun resumeImmediateUpdate(info: AppUpdateInfo) {
         startUpdate(info, AppUpdateType.IMMEDIATE)
