@@ -22,15 +22,16 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.rehman.docscan.R
 import com.rehman.docscan.databinding.DialogProgressBinding
+import com.rehman.docscan.interfaces.SnackBarListener
 
 class InAppUpdateUtils(
     private val activity: Activity,
     private val resultLauncher: ActivityResultLauncher<IntentSenderRequest>, // Use registerForActivityResult
+    private val snackBarListener: SnackBarListener,
     private val flexibleThresholdDays: Int = 2,
     private val immediateThresholdDays: Int = 7,
     private val maxRetry: Int = 3
-) : LifecycleObserver
-{
+) : LifecycleObserver {
 
     private val appUpdateManager = AppUpdateManagerFactory.create(activity)
     private var listener: InstallStateUpdatedListener? = null
@@ -117,10 +118,17 @@ class InAppUpdateUtils(
                 retries = 0
                 Log.i(TAG, "Update completed successfully")
             }
+
             Activity.RESULT_CANCELED -> {
                 Log.i(TAG, "User canceled the update")
-                UPDATE_AVAILABLE = false  // Prevent immediate re-trigger
+                snackBarListener.showSnackBar(
+                    "Update canceled, please update manually from play store.",
+                    R.color.color_error,
+                    R.color.color_text_primary,
+                    2000L
+                )
             }
+
             else -> {
                 Log.w(TAG, "Unknown result code: $resultCode")
                 retryOrAbort()
