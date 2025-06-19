@@ -8,6 +8,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -16,6 +17,8 @@ import com.rehman.docscan.core.InAppUpdateUtils
 import com.rehman.docscan.core.Utils.showCustomSnackBar
 import com.rehman.docscan.databinding.ActivityMainBinding
 import com.rehman.docscan.interfaces.SnackBarListener
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), SnackBarListener {
 
@@ -46,11 +49,14 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         updateUtils = InAppUpdateUtils(
             activity = this,
             resultLauncher = updateLauncher,
-            snackBarListener = this,
             flexibleThresholdDays = 0
         )
-        updateUtils.checkUpdateFlow {
-            updateSettingsBadge()
+
+        lifecycleScope.launch {
+            delay(1000)
+            updateUtils.checkUpdateFlow {
+                updateSettingsBadge()
+            }
         }
 
         initBottomNav()

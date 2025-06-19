@@ -1,15 +1,20 @@
 package com.rehman.docscan.core
 
+import android.Manifest
 import android.animation.LayoutTransition
 import android.app.Activity
 import android.app.Dialog
 import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.util.Log
 import android.view.Gravity
 import android.view.Window
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.LifecycleObserver
 import com.google.android.play.core.appupdate.AppUpdateInfo
@@ -27,7 +32,6 @@ import com.rehman.docscan.interfaces.SnackBarListener
 class InAppUpdateUtils(
     private val activity: Activity,
     private val resultLauncher: ActivityResultLauncher<IntentSenderRequest>, // Use registerForActivityResult
-    private val snackBarListener: SnackBarListener,
     private val flexibleThresholdDays: Int = 2,
     private val immediateThresholdDays: Int = 7,
     private val maxRetry: Int = 3
@@ -121,12 +125,23 @@ class InAppUpdateUtils(
 
             Activity.RESULT_CANCELED -> {
                 Log.i(TAG, "User canceled the update")
-                snackBarListener.showSnackBar(
-                    "Update canceled, please update manually from play store.",
-                    R.color.color_error,
-                    R.color.color_text_primary,
-                    2000L
-                )
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        ActivityCompat.requestPermissions(
+                            activity,
+                            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                            1001
+                        )
+                    } else {
+                        NotificationUtils.showPlayStoreNotification(activity)
+                    }
+                } else {
+                    NotificationUtils.showPlayStoreNotification(activity)
+                }
+
             }
 
             else -> {
