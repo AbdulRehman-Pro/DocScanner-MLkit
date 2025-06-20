@@ -1,35 +1,21 @@
 package com.rehman.docscan.ui.mainScreen
 
-import android.app.NotificationManager
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.rehman.docscan.R
 import com.rehman.docscan.core.InAppUpdateUtils
-import com.rehman.docscan.core.PermissionUtils
-import com.rehman.docscan.core.PermissionUtils.arePermissionGranted
-import com.rehman.docscan.core.PermissionUtils.requestPermission
 import com.rehman.docscan.core.Utils.showCustomSnackBar
-import com.rehman.docscan.core.Utils.showPermissionDialog
 import com.rehman.docscan.databinding.ActivityMainBinding
 import com.rehman.docscan.interfaces.SnackBarListener
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), SnackBarListener {
 
@@ -60,15 +46,13 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         updateUtils = InAppUpdateUtils(
             activity = this,
             resultLauncher = updateLauncher,
-            flexibleThresholdDays = 0
         )
 
-        lifecycleScope.launch {
-            delay(1000)
-            updateUtils.checkUpdateFlow {
-                updateSettingsBadge()
-            }
+        updateUtils.checkUpdateFlow {
+            updateSettingsBadge()
         }
+
+
 
         initBottomNav()
         handleBackPress()
