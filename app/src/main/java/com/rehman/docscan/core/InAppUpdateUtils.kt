@@ -5,7 +5,6 @@ import android.animation.LayoutTransition
 import android.app.Activity
 import android.app.Dialog
 import android.content.IntentSender
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.util.Log
@@ -14,7 +13,6 @@ import android.view.Window
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.LifecycleObserver
 import com.google.android.play.core.appupdate.AppUpdateInfo
@@ -26,8 +24,11 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.rehman.docscan.R
+import com.rehman.docscan.core.PermissionUtils.arePermissionGranted
+import com.rehman.docscan.core.PermissionUtils.requestPermission
+import com.rehman.docscan.core.Utils.openAppSettings
+import com.rehman.docscan.core.Utils.showPermissionDialog
 import com.rehman.docscan.databinding.DialogProgressBinding
-import com.rehman.docscan.interfaces.SnackBarListener
 
 class InAppUpdateUtils(
     private val activity: Activity,
@@ -127,22 +128,41 @@ class InAppUpdateUtils(
                 Log.i(TAG, "User canceled the update")
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS)
-                        != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        ActivityCompat.requestPermissions(
-                            activity,
-                            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                            1001
-                        )
+                    if (!activity.arePermissionGranted()) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                                activity,
+                                Manifest.permission.POST_NOTIFICATIONS
+                            )
+                        ) {
+                            activity.showPermissionDialog(
+                                title = "Enable Notifications",
+                                description = "We use notifications to alert you about app updates. Please allow this permission.",
+                                positiveButton = "Allow",
+                                positiveButtonClickListener = {
+                                    activity.requestPermission()
+                                }
+                            )
+
+                        } else {
+                            // Possibly "Don't ask again"
+                            activity.showPermissionDialog(
+                                title = "Enable Notifications from Settings",
+                                description = "To get notified about app updates, enable notification permission from settings.",
+                                positiveButton = "Open Settings",
+                                positiveButtonClickListener = {
+                                    activity.openAppSettings()
+                                }
+                            )
+                        }
+
                     } else {
                         NotificationUtils.showPlayStoreNotification(activity)
                     }
                 } else {
                     NotificationUtils.showPlayStoreNotification(activity)
                 }
-
             }
+
 
             else -> {
                 Log.w(TAG, "Unknown result code: $resultCode")
@@ -199,7 +219,7 @@ class InAppUpdateUtils(
 
                 window?.apply {
                     setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-                    setDimAmount(0.8F)
+                    setDimAmount(0.6F)
                     setGravity(Gravity.CENTER)
                 }
 
@@ -251,7 +271,7 @@ class InAppUpdateUtils(
 
             window?.apply {
                 setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-                setDimAmount(0.8F)
+                setDimAmount(0.6F)
                 setGravity(Gravity.CENTER)
             }
 

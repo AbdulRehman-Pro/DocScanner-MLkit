@@ -36,4 +36,5 @@
     <string name="downloaded_description">The latest version has been downloaded. Restart the app now to complete the update.</string>
     <string name="downloaded_button">Restart now</string>
     <string name="update_tag">New Update</string>
+    <string name="cancel">Cancel</string>
 </resources>

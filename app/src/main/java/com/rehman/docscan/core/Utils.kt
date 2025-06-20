@@ -2,6 +2,8 @@ package com.rehman.docscan.core
 
 import android.animation.LayoutTransition
 import android.app.Activity
+import android.app.Dialog
+import android.app.NotificationManager
 import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -10,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.media.MediaScannerConnection
@@ -19,6 +22,7 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.provider.Settings
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
@@ -26,9 +30,11 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.MetricAffectingSpan
 import android.text.style.RelativeSizeSpan
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -37,6 +43,7 @@ import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isGone
 import com.rehman.docscan.R
 import com.rehman.docscan.databinding.CustomSnackbarBinding
@@ -49,6 +56,8 @@ import java.util.Locale
 import androidx.core.net.toUri
 import androidx.core.os.BuildCompat
 import com.rehman.docscan.BuildConfig
+import com.rehman.docscan.databinding.DialogPermissionBinding
+import com.rehman.docscan.databinding.DialogProgressBinding
 
 
 object Utils {
@@ -552,6 +561,61 @@ object Utils {
         }
     }
 
+    fun Context.showPermissionDialog(
+        title: String,
+        description: String,
+        positiveButton: String,
+        positiveButtonClickListener: () -> Unit,
+    ) {
+        Dialog(this).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            val binding = DialogPermissionBinding.inflate(this.layoutInflater)
+            setContentView(binding.root)
+            setCancelable(false)
+
+            window?.apply {
+                setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+                setDimAmount(0.6F)
+                setGravity(Gravity.CENTER)
+            }
+
+            binding.apply {
+
+                dialogTitle.text = title
+                dialogDescription.text = description
+                dialogPositiveButton.text = positiveButton
+
+                dialogPositiveButton.setOnClickListener {
+                    dismiss()
+                    positiveButtonClickListener.invoke()
+                }
+
+                dialogNegativeButton.setOnClickListener { dismiss() }
+            }
+
+            show()
+        }
+    }
+
+
+    fun Context.openAppSettings() {
+        val intent =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Intent().apply {
+                    action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                    putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                    // For Android 8.0+ (API 26+)
+                    putExtra(Settings.EXTRA_CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT)
+                }
+
+            } else {
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", packageName, null)
+                }
+            }
+        startActivity(intent)
+    }
 
 
 }
+

@@ -291,7 +291,7 @@ class SettingFragment : Fragment() {
             window?.apply {
                 setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-                setDimAmount(0.8F)
+                setDimAmount(0.6F)
                 attributes.windowAnimations = R.style.DialogAnimation
                 setGravity(Gravity.BOTTOM)
                 addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -322,7 +322,7 @@ class SettingFragment : Fragment() {
             window?.apply {
                 setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-                setDimAmount(0.8F)
+                setDimAmount(0.6F)
                 attributes.windowAnimations = R.style.DialogAnimation
                 setGravity(Gravity.BOTTOM)
                 addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
