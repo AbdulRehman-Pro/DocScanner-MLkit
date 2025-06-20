@@ -58,4 +58,17 @@ object Prefs {
         sharedPrefs.edit() { remove("importFromGallery") }
     }
 
+   // App update notification
+    fun setUpdateNotification(updateNotification: Boolean) {
+        sharedPrefs.edit() { putBoolean("updateNotification", updateNotification) }
+
+    }
+
+    fun getUpdateNotification(): Boolean = sharedPrefs.getBoolean("updateNotification", false)
+
+    fun removeUpdateNotification(context: Context) {
+        sharedPrefs.edit() { remove("updateNotification") }
+    }
+
+
 }

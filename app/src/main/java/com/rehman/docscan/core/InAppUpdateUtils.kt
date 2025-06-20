@@ -121,6 +121,7 @@ class InAppUpdateUtils(
         when (resultCode) {
             Activity.RESULT_OK -> {
                 retries = 0
+                Prefs.setUpdateNotification(false)
                 Log.i(TAG, "Update completed successfully")
             }
 

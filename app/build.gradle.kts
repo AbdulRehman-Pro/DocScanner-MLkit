@@ -13,8 +13,8 @@ android {
         applicationId = "com.rehman.docscan"
         minSdk = 24
         targetSdk = 35
-        versionCode = 12
-        versionName = "1.1.1"
+        versionCode = 13
+        versionName = "1.1.2"
 
         // Update what's new notes in distribution/whatsNew/whatsnew-en-US
 
@@ -114,6 +114,9 @@ dependencies {
 
     // Play store in app update
     implementation(libs.app.update.ktx)
+
+    // Kotlin + coroutines
+    implementation(libs.androidx.work.runtime.ktx)
 
 
 }
