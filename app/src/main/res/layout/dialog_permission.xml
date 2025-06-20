@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:animateLayoutChanges="true"
+    android:background="@drawable/dialog_progress_bg"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:contentDescription="@string/content_description"
+        android:src="@drawable/ic_permission"
+        app:tint="@color/color_secondary" />
+
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/_10sdp"
+        android:fontFamily="@font/roboto_bold"
+        android:textColor="@color/color_text_primary"
+        android:textSize="@dimen/_14sdp" />
+
+    <TextView
+        android:id="@+id/dialogDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:fontFamily="@font/roboto"
+        android:textAlignment="center"
+        android:textColor="@color/color_text_secondary"
+        android:textSize="@dimen/_12sdp" />
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dialogNegativeButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:backgroundTint="@color/color_primary_variant"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/cancel"
+            android:textColor="@color/color_secondary" />
+
+        <Button
+            android:id="@+id/dialogPositiveButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:backgroundTint="@color/color_secondary"
+            android:fontFamily="@font/roboto_medium"
+            android:paddingHorizontal="@dimen/_20sdp"
+            android:textColor="@color/color_primary_variant" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
