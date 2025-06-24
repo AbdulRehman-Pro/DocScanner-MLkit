@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         updateUtils = InAppUpdateUtils(
             activity = this,
             resultLauncher = updateLauncher,
+            flexibleThresholdDays = 0
         )
 
         updateUtils.checkUpdateFlow {
