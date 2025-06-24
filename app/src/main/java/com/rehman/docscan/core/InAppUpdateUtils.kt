@@ -4,6 +4,7 @@ import android.Manifest
 import android.animation.LayoutTransition
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.IntentSender
 import android.graphics.Color
 import android.os.Build
@@ -31,14 +32,14 @@ import com.rehman.docscan.core.Utils.showPermissionDialog
 import com.rehman.docscan.databinding.DialogProgressBinding
 
 class InAppUpdateUtils(
-    private val activity: Activity,
-    private val resultLauncher: ActivityResultLauncher<IntentSenderRequest>, // Use registerForActivityResult
+    private val context: Context,
+    private val resultLauncher: ActivityResultLauncher<IntentSenderRequest>? = null, // Use registerForActivityResult
     private val flexibleThresholdDays: Int = 2,
     private val immediateThresholdDays: Int = 7,
     private val maxRetry: Int = 3
 ) : LifecycleObserver {
 
-    private val appUpdateManager = AppUpdateManagerFactory.create(activity)
+    private val appUpdateManager = AppUpdateManagerFactory.create(context)
     private var listener: InstallStateUpdatedListener? = null
     private var retries = 0
 
@@ -109,11 +110,12 @@ class InAppUpdateUtils(
 
         try {
             // If an in-app update is already running, resume the update.
-            appUpdateManager.startUpdateFlowForResult(
-                info,
-                resultLauncher,
-                options
-            )
+            if (resultLauncher != null)
+                appUpdateManager.startUpdateFlowForResult(
+                    info,
+                    resultLauncher,
+                    options
+                )
 
         } catch (e: IntentSender.SendIntentException) {
             Log.e(TAG, "Failed to start update flow: ${e.localizedMessage}")
@@ -132,38 +134,38 @@ class InAppUpdateUtils(
                 Log.i(TAG, "User canceled the update")
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    if (!activity.arePermissionGranted()) {
+                    if (!context.arePermissionGranted()) {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(
-                                activity,
+                                context as Activity,
                                 Manifest.permission.POST_NOTIFICATIONS
                             )
                         ) {
-                            activity.showPermissionDialog(
+                            context.showPermissionDialog(
                                 title = "Enable Notifications",
                                 description = "We use notifications to alert you about app updates. Please allow this permission.",
                                 positiveButton = "Allow",
                                 positiveButtonClickListener = {
-                                    activity.requestPermission()
+                                    context.requestPermission()
                                 }
                             )
 
                         } else {
                             // Possibly "Don't ask again"
-                            activity.showPermissionDialog(
+                            context.showPermissionDialog(
                                 title = "Enable Notifications from Settings",
                                 description = "To get notified about app updates, enable notification permission from settings.",
                                 positiveButton = "Open Settings",
                                 positiveButtonClickListener = {
-                                    activity.openAppSettings()
+                                    context.openAppSettings()
                                 }
                             )
                         }
 
                     } else {
-                        NotificationUtils.showPlayStoreNotification(activity)
+                        NotificationUtils.showPlayStoreNotification(context)
                     }
                 } else {
-                    NotificationUtils.showPlayStoreNotification(activity)
+                    NotificationUtils.showPlayStoreNotification(context)
                 }
             }
 
@@ -188,10 +190,12 @@ class InAppUpdateUtils(
                 InstallStatus.DOWNLOADING -> {
 //                    promptInfo(state)
                 }
+
                 InstallStatus.DOWNLOADED -> {
 //                    showInstallReadyDialog()
                     appUpdateManager.completeUpdate()
                 }
+
                 InstallStatus.FAILED -> {
                     Log.e(TAG, "Update failed (code=${state.installErrorCode()})")
                     retryOrAbort()
@@ -216,9 +220,9 @@ class InAppUpdateUtils(
         else 0
 
         if (dialog == null) {
-            dialog = Dialog(activity).apply {
+            dialog = Dialog(context).apply {
                 requestWindowFeature(Window.FEATURE_NO_TITLE)
-                val binding = DialogProgressBinding.inflate(activity.layoutInflater)
+                val binding = DialogProgressBinding.inflate((context as Activity).layoutInflater)
                 setContentView(binding.root)
                 setCancelable(false)
 
@@ -255,9 +259,9 @@ class InAppUpdateUtils(
 
     private fun showInstallReadyDialog() {
         dialog?.dismiss()
-        dialog = Dialog(activity).apply {
+        dialog = Dialog(context).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
-            val binding = DialogProgressBinding.inflate(activity.layoutInflater)
+            val binding = DialogProgressBinding.inflate((context as Activity).layoutInflater)
             setContentView(binding.root)
             setCancelable(false)
 
@@ -304,7 +308,7 @@ class InAppUpdateUtils(
     }
 
     companion object {
-        private const val TAG = "InAppUpdateUtils"
+        const val TAG = "InAppUpdateUtils"
         private const val HIGH_PRIORITY = 4
         var UPDATE_AVAILABLE = false
     }
