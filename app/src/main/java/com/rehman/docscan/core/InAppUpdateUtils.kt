@@ -53,7 +53,10 @@ class InAppUpdateUtils(
                         UPDATE_AVAILABLE = true
                     }
 
-                    info.installStatus() == InstallStatus.DOWNLOADED -> showInstallReadyDialog()
+                    info.installStatus() == InstallStatus.DOWNLOADED -> {
+//                        showInstallReadyDialog()
+                        appUpdateManager.completeUpdate()
+                    }
 
                     info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS -> {
                         resumeImmediateUpdate(info)
@@ -182,8 +185,13 @@ class InAppUpdateUtils(
 
         listener = InstallStateUpdatedListener { state ->
             when (state.installStatus()) {
-                InstallStatus.DOWNLOADING -> promptInfo(state)
-                InstallStatus.DOWNLOADED -> showInstallReadyDialog()
+                InstallStatus.DOWNLOADING -> {
+//                    promptInfo(state)
+                }
+                InstallStatus.DOWNLOADED -> {
+//                    showInstallReadyDialog()
+                    appUpdateManager.completeUpdate()
+                }
                 InstallStatus.FAILED -> {
                     Log.e(TAG, "Update failed (code=${state.installErrorCode()})")
                     retryOrAbort()
