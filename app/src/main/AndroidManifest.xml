@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DocScan"
         tools:targetApi="31">
+
         <activity
             android:name=".ui.mainScreen.MainActivity"
             android:exported="false" />
@@ -31,16 +32,26 @@
             android:name=".ui.splashScreen.SplashActivity"
             android:exported="true"
             android:theme="@style/SplashScreenTheme">
+
+            <!-- This is required for Activity Launcher -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+
+           <!-- This is required to make deep links trigger your app from outside (e.g. browser, notification)-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="docscan"
+                    android:host="setting" />
+            </intent-filter>
+
         </activity>
-
-
-
 
 
         <receiver android:name=".core.UpdateCheckReceiver" android:exported="false"/>
