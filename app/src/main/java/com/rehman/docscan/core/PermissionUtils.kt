@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 object PermissionUtils {
 
     // Check if permissions are granted
-    fun Activity.arePermissionGranted(): Boolean {
+    fun Context.arePermissionGranted(): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                 ContextCompat.checkSelfPermission(
                     this,
@@ -20,11 +20,10 @@ object PermissionUtils {
     }
 
 
-
     // Request permission
-    fun Activity.requestPermission() {
+    fun Context.requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
+            ActivityCompat.requestPermissions(this as Activity, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
         }
     }
 

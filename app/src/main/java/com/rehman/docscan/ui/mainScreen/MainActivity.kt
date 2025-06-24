@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
 
         // Initialize the In-App Update utils
         updateUtils = InAppUpdateUtils(
-            activity = this,
+            context = this,
             resultLauncher = updateLauncher,
             flexibleThresholdDays = 0
         )
@@ -52,7 +52,6 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         updateUtils.checkUpdateFlow {
             updateSettingsBadge()
         }
-
 
 
         initBottomNav()
