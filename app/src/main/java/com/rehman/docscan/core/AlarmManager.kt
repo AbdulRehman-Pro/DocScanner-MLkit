@@ -15,7 +15,7 @@ class UpdateCheckReceiver : BroadcastReceiver() {
 
         updateUtils.checkUpdateFlow {
             if (InAppUpdateUtils.UPDATE_AVAILABLE) {
-                NotificationUtils.showPlayStoreNotification(context)
+                NotificationUtils.showPlayStoreNotification(context = context, openApp = true)
             }
         }
 

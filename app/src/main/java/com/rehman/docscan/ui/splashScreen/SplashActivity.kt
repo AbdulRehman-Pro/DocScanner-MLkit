@@ -33,8 +33,16 @@ class SplashActivity : AppCompatActivity() {
 
 
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, MainActivity::class.java))
+
+            val launchIntent = Intent(this, MainActivity::class.java).apply {
+                action = intent.action
+                data = intent.data
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+
+            startActivity(launchIntent)
             finish()
+
         }, 2000)
     }
 }

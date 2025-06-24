@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         // Initialize the In-App Update utils
         updateUtils = InAppUpdateUtils(
             context = this,
@@ -61,6 +62,21 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
     }
 
     private fun initBottomNav() {
+
+
+        val intentData = intent?.data
+        if (intentData != null) {
+            when (intentData.toString()) {
+                "docscan://setting" -> {
+                    // Delay is sometimes necessary to allow setup
+                    binding.bottomNavigationView.post {
+                        binding.bottomNavigationView.selectedItemId = R.id.settingFragment
+                    }
+                }
+            }
+        }
+
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
