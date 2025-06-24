@@ -42,14 +42,13 @@ object NotificationUtils {
                 description = "Notification to redirect user to Play Store"
                 setShowBadge(true)
                 enableLights(true)
-                enableVibration(true)
             }
             val manager = context.getSystemService(NotificationManager::class.java)
             manager?.createNotificationChannel(channel)
         }
 
         val notification = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_update) // Make sure this icon exists in drawable
+            .setSmallIcon(R.mipmap.ic_launcher) // Make sure this icon exists in drawable
             .setContentTitle("Update Available")
             .setContentText("Tap to update the app from Play Store")
             .setContentIntent(pendingIntent)
