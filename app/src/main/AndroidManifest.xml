@@ -11,14 +11,6 @@
         <package android:name="com.android.vending" />
     </queries>
 
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.HOME" />
-        </intent>
-    </queries>
-
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -37,19 +29,12 @@
             android:name=".ui.splashScreen.SplashActivity"
             android:exported="true"
             android:theme="@style/SplashScreenTheme">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
         </activity>
 
         <meta-data

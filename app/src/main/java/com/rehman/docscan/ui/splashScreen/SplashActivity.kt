@@ -1,14 +1,10 @@
 package com.rehman.docscan.ui.splashScreen
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
-import android.util.Log
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -35,30 +31,10 @@ class SplashActivity : AppCompatActivity() {
             insets
         }
 
-        if (!isDefaultLauncher()) {
-            val intent = Intent(Settings.ACTION_HOME_SETTINGS)
-            startActivity(intent)
-        }else{
-            Handler(Looper.getMainLooper()).postDelayed({
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            }, 2000)
-        }
 
-
-    }
-
-    fun isDefaultLauncher(): Boolean {
-        val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
-        val resolveInfo =
-            packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
-
-        Log.d(
-            "LauncherCheck",
-            "Default Launcher: ${resolveInfo?.activityInfo?.packageName}, My App: ${packageName}"
-        )
-
-        // Check if the resolved activity matches your app's package
-        return resolveInfo?.activityInfo?.packageName == packageName
+        Handler(Looper.getMainLooper()).postDelayed({
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }, 2000)
     }
 }
