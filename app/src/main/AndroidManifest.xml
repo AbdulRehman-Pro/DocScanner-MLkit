@@ -2,13 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <queries>
+
         <!-- Allow querying Play Store -->
         <package android:name="com.android.vending" />
     </queries>
@@ -20,14 +19,28 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:enableOnBackInvokedCallback="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DocScan"
-        tools:targetApi="31">
+        tools:targetApi="33">
 
         <activity
             android:name=".ui.mainScreen.MainActivity"
-            android:exported="false" />
+            android:exported="true">
+            <!-- This is required to make deep links trigger your app from outside (e.g. browser, notification) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="update"
+                    android:scheme="docscan" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".ui.splashScreen.SplashActivity"
             android:exported="true"
@@ -36,33 +49,25 @@
             <!-- This is required for Activity Launcher -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-
-           <!-- This is required to make deep links trigger your app from outside (e.g. browser, notification)-->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:scheme="docscan"
-                    android:host="setting" />
             </intent-filter>
 
         </activity>
 
-
-        <receiver android:name=".core.UpdateCheckReceiver" android:exported="false"/>
-        <receiver android:name=".core.BootReceiver" android:enabled="true" android:exported="true">
+        <receiver
+            android:name=".core.UpdateCheckReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".core.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
-
 
         <meta-data
             android:name="com.google.android.gms.version"

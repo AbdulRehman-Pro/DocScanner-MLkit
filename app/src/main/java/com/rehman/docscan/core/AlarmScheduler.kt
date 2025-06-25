@@ -13,7 +13,7 @@ import androidx.core.net.toUri
 object AlarmScheduler {
 
     private const val ALARM_INTERVAL_MS = 15 * 60 * 1000L // 15 min
-//    private const val ALARM_INTERVAL_MS = 10 * 1000L // 10 sec for testing
+//    private const val ALARM_INTERVAL_MS = 20 * 1000L // 20 sec for testing
 
     fun scheduleUpdateAlarm(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

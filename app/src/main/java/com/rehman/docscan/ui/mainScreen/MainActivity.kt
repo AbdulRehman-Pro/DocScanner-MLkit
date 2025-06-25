@@ -1,20 +1,29 @@
 package com.rehman.docscan.ui.mainScreen
 
+import android.Manifest
+import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.rehman.docscan.R
 import com.rehman.docscan.core.InAppUpdateUtils
+import com.rehman.docscan.core.PermissionUtils.arePermissionGranted
+import com.rehman.docscan.core.PermissionUtils.requestPermission
+import com.rehman.docscan.core.Prefs
+import com.rehman.docscan.core.Utils.openAppSettings
 import com.rehman.docscan.core.Utils.showCustomSnackBar
+import com.rehman.docscan.core.Utils.showPermissionDialog
 import com.rehman.docscan.databinding.ActivityMainBinding
 import com.rehman.docscan.interfaces.SnackBarListener
 
@@ -31,6 +40,33 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
     ) { result ->
         updateUtils.onActivityResult(result.resultCode)
     }
+
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                // ✅ User allowed
+                Log.d("PermissionResult", "POST_NOTIFICATIONS granted")
+                // You can now show a welcome notification or badge
+            } else {
+                // ❌ User denied
+                Log.d("PermissionResult", "POST_NOTIFICATIONS denied")
+                // Optionally check if it's "Don't ask again"
+                val shouldShowRationale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
+                } else {
+                    false
+                }
+                if (!shouldShowRationale) {
+                    Log.d("PermissionResult", "Don't ask again selected")
+                    // Optionally guide user to app settings
+
+                }
+            }
+        }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +91,97 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
             updateSettingsBadge()
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!arePermissionGranted()) {
+
+                val isFirstTimeAsking = !Prefs.wasNotificationPermissionRequested
+                if (isFirstTimeAsking) {
+                    showPermissionDialog(
+                        title = "Enable Notifications",
+                        description = "We use notifications to alert you about updates and important events.",
+                        positiveButton = "Allow",
+                        positiveButtonClickListener = {
+                            Prefs.wasNotificationPermissionRequested = true
+                            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    )
+                } else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            this,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        )
+                    ) {
+                        // Denied once (no "Don't ask again")
+                        showPermissionDialog(
+                            title = "Enable Notifications",
+                            description = "We use notifications to alert you about updates and important events.",
+                            positiveButton = "Allow",
+                            positiveButtonClickListener = {
+                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        )
+                    } else {
+                        // "Don't ask again"
+                        showPermissionDialog(
+                            title = "Enable Notifications from Settings",
+                            description = "Notification permission is permanently denied. Open settings to allow it manually.",
+                            positiveButton = "Open Settings",
+                            positiveButtonClickListener = {
+                                openAppSettings()
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            if (!arePermissionGranted()) {
+//
+//                val isFirstTimeAsking = !Prefs.wasNotificationPermissionRequested
+//                if (isFirstTimeAsking) {
+//                    showPermissionDialog(
+//                        title = "Enable Notifications",
+//                        description = "We use notifications to alert you about updates and important events.",
+//                        positiveButton = "Allow",
+//                        positiveButtonClickListener = {
+//                            Prefs.wasNotificationPermissionRequested = true
+//                            requestPermission() // 🔁 now safe to ask
+//                        }
+//                    )
+//                } else {
+//                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+//                            this,
+//                            Manifest.permission.POST_NOTIFICATIONS
+//                        )
+//                    ) {
+//                        // Denied once, but user didn’t check "Don't ask again"
+//                        showPermissionDialog(
+//                            title = "Enable Notifications",
+//                            description = "We use notifications to alert you about updates and important events.",
+//                            positiveButton = "Allow",
+//                            positiveButtonClickListener = {
+//                                requestPermission() // 🔁 now safe to ask
+//                            }
+//                        )
+//                    } else {
+//                        // "Don't ask again"
+//                        showPermissionDialog(
+//                            title = "Enable Notifications from Settings",
+//                            description = "Notification permission is permanently denied. Open settings to allow it manually.",
+//                            positiveButton = "Open Settings",
+//                            positiveButtonClickListener = {
+//                                openAppSettings()
+//                            }
+//                        )
+//                    }
+//                }
+//            }
+//        }
+
+
 
         initBottomNav()
         handleBackPress()
@@ -63,19 +190,6 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
     }
 
     private fun initBottomNav() {
-
-
-        val intentData = intent?.data
-        if (intentData != null) {
-            when (intentData.toString()) {
-                "docscan://setting" -> {
-                    // Delay is sometimes necessary to allow setup
-                    binding.bottomNavigationView.post {
-                        binding.bottomNavigationView.selectedItemId = R.id.settingFragment
-                    }
-                }
-            }
-        }
 
 
         val navHostFragment =
