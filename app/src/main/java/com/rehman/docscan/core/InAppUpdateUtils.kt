@@ -188,7 +188,7 @@ class InAppUpdateUtils(
         listener = InstallStateUpdatedListener { state ->
             when (state.installStatus()) {
                 InstallStatus.DOWNLOADING -> {
-//                    promptInfo(state)
+                    promptInfo(state)
                 }
 
                 InstallStatus.DOWNLOADED -> {
