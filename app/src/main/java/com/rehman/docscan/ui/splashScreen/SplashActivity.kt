@@ -1,7 +1,9 @@
 package com.rehman.docscan.ui.splashScreen
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -41,6 +43,13 @@ class SplashActivity : AppCompatActivity() {
             }
 
             startActivity(launchIntent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(
+                    OVERRIDE_TRANSITION_CLOSE,
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
+                )
+            }
             finish()
 
         }, 2000)
