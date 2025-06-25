@@ -36,20 +36,7 @@ class SplashActivity : AppCompatActivity() {
 
         Handler(Looper.getMainLooper()).postDelayed({
 
-            val launchIntent = Intent(this, MainActivity::class.java).apply {
-                action = intent.action
-                data = intent.data
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-
-            startActivity(launchIntent)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                overrideActivityTransition(
-                    OVERRIDE_TRANSITION_CLOSE,
-                    R.anim.slide_in_right,
-                    R.anim.slide_out_left
-                )
-            }
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
 
         }, 2000)

@@ -126,7 +126,6 @@ class InAppUpdateUtils(
         when (resultCode) {
             Activity.RESULT_OK -> {
                 retries = 0
-                Prefs.setUpdateNotification(false)
                 Log.i(TAG, "Update completed successfully")
             }
 
@@ -134,34 +133,7 @@ class InAppUpdateUtils(
                 Log.i(TAG, "User canceled the update")
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    if (!context.arePermissionGranted()) {
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                                context as Activity,
-                                Manifest.permission.POST_NOTIFICATIONS
-                            )
-                        ) {
-                            context.showPermissionDialog(
-                                title = "Enable Notifications",
-                                description = "We use notifications to alert you about app updates. Please allow this permission.",
-                                positiveButton = "Allow",
-                                positiveButtonClickListener = {
-                                    context.requestPermission()
-                                }
-                            )
-
-                        } else {
-                            // Possibly "Don't ask again"
-                            context.showPermissionDialog(
-                                title = "Enable Notifications from Settings",
-                                description = "To get notified about app updates, enable notification permission from settings.",
-                                positiveButton = "Open Settings",
-                                positiveButtonClickListener = {
-                                    context.openAppSettings()
-                                }
-                            )
-                        }
-
-                    } else {
+                    if (context.arePermissionGranted()) {
                         NotificationUtils.showPlayStoreNotification(context)
                     }
                 } else {

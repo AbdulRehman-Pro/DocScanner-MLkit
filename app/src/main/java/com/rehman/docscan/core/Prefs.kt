@@ -59,16 +59,13 @@ object Prefs {
     }
 
    // App update notification
-    fun setUpdateNotification(updateNotification: Boolean) {
-        sharedPrefs.edit() { putBoolean("updateNotification", updateNotification) }
 
-    }
+    var wasNotificationPermissionRequested: Boolean
+        get() = sharedPrefs.getBoolean("notify_permission_asked", false)
+        set(value) {
+            sharedPrefs.edit() { putBoolean("notify_permission_asked", value) }
+        }
 
-    fun getUpdateNotification(): Boolean = sharedPrefs.getBoolean("updateNotification", false)
-
-    fun removeUpdateNotification(context: Context) {
-        sharedPrefs.edit() { remove("updateNotification") }
-    }
 
 
 }

@@ -19,8 +19,6 @@
         android:id="@+id/settingFragment"
         android:name="com.rehman.docscan.ui.mainScreen.navigation.SettingFragment"
         android:label="fragment_setting"
-        tools:layout="@layout/fragment_setting">
+        tools:layout="@layout/fragment_setting"/>
 
-        <deepLink app:uri="docscan:setting"/>
-    </fragment>
 </navigation>

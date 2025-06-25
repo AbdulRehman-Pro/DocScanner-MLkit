@@ -23,7 +23,7 @@ object NotificationUtils {
         val notificationId = 101
 
         val intent = if (openApp){
-            Intent(Intent.ACTION_VIEW, "docscan://setting".toUri()).apply {
+            Intent(Intent.ACTION_VIEW, "docscan://update".toUri()).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
         }else{
