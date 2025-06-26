@@ -13,8 +13,8 @@ android {
         applicationId = "com.rehman.docscan"
         minSdk = 24
         targetSdk = 35
-        versionCode = 18
-        versionName = "1.1.7"
+        versionCode = 19
+        versionName = "1.1.8"
 
         // Update what's new notes in distribution/whatsNew/whatsnew-en-US
 
