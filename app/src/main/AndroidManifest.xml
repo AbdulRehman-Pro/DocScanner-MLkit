@@ -22,11 +22,20 @@
         android:enableOnBackInvokedCallback="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:hardwareAccelerated="true"
         android:theme="@style/Theme.DocScan"
         tools:targetApi="33">
 
         <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            tools:replace="android:theme"
+            android:hardwareAccelerated="true"
+            android:theme="@style/Theme.AdScreen" />
+
+
+        <activity
             android:name=".ui.mainScreen.MainActivity"
+            android:hardwareAccelerated="true"
             android:exported="true">
             <!-- This is required to make deep links trigger your app from outside (e.g. browser, notification) -->
             <intent-filter>
@@ -78,6 +87,10 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id"/>
     </application>
 
 </manifest>

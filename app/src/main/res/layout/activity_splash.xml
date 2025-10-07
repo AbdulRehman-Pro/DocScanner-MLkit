@@ -72,7 +72,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_30sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
         android:fontFamily="@font/roboto"
         android:text="@string/splash_description"
         android:textAlignment="center"

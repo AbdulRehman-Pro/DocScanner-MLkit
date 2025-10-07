@@ -12,6 +12,7 @@
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_80sdp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_5sdp"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/premium" />
@@ -26,10 +27,6 @@
         android:textColor="@color/color_text_primary"
         android:textSize="@dimen/_16sdp" />
 
-    <!--
-        android:text="This feature is part of our premium experience. You can unlock it forever or use your earned coins for temporary access.\nDon’t have enough coins?\nWatch a short video to earn more."
--->
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,24 +34,24 @@
         android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:fontFamily="@font/roboto"
-        android:text="Coming Soon..."
+        android:text="This feature is part of our premium experience. You can unlock it forever or use your earned coins for temporary access.\n\nDon’t have enough coins?\nWatch a short video to earn more."
         android:textAlignment="center"
         android:textColor="@color/color_text_secondary"
         android:textSize="@dimen/_10sdp" />
 
 
     <TextView
+        android:id="@+id/coinsAvailable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:fontFamily="@font/roboto_medium"
-        android:text="Available coin: 5"
+        android:text="Available coin: 0"
         android:textAlignment="center"
         android:textColor="@color/color_on_primary"
-        android:textSize="@dimen/_12sdp"
-        android:visibility="gone" />
+        android:textSize="@dimen/_12sdp" />
 
     <View
         android:layout_width="wrap_content"
@@ -68,8 +65,7 @@
         android:layout_height="@dimen/_70sdp"
         android:layout_marginHorizontal="@dimen/_10sdp"
         android:background="@drawable/pro_golden_bg"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="@dimen/_120sdp"
@@ -105,7 +101,7 @@
                 android:includeFontPadding="false"
                 android:text="GO"
                 android:textColor="@color/color_primary"
-                android:textSize="@dimen/_20ssp" />
+                android:textSize="@dimen/_18ssp" />
         </androidx.cardview.widget.CardView>
 
         <RelativeLayout
@@ -153,14 +149,14 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/watchAdCard"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_70sdp"
         android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_15sdp"
         android:background="@drawable/ad_blue_bg"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="@dimen/_120sdp"
@@ -196,7 +192,7 @@
                 android:includeFontPadding="false"
                 android:text="WATCH"
                 android:textColor="@color/color_primary"
-                android:textSize="@dimen/_20ssp" />
+                android:textSize="@dimen/_18ssp" />
         </androidx.cardview.widget.CardView>
 
         <RelativeLayout

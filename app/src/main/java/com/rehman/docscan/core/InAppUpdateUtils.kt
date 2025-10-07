@@ -42,6 +42,11 @@ class InAppUpdateUtils(
     private val appUpdateManager = AppUpdateManagerFactory.create(context)
     private var listener: InstallStateUpdatedListener? = null
     private var retries = 0
+    
+    
+   init {
+       Prefs.init(context)
+   }
 
     private var dialog: Dialog? = null
 
@@ -160,7 +165,7 @@ class InAppUpdateUtils(
         listener = InstallStateUpdatedListener { state ->
             when (state.installStatus()) {
                 InstallStatus.DOWNLOADING -> {
-                    promptInfo(state)
+//                    promptInfo(state)
                 }
 
                 InstallStatus.DOWNLOADED -> {

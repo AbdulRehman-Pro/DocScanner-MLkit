@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -13,7 +14,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_110sdp"
+        android:layout_height="@dimen/_90sdp"
         android:background="@color/color_primary_variant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,29 +40,47 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintBottom_toTopOf="@+id/bottomLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
         app:navGraph="@navigation/nav_graph" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
+    <LinearLayout
+        android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:backgroundTint="@color/color_primary_variant"
-        app:compatShadowEnabled="true"
-        app:itemActiveIndicatorStyle="@style/Theme.BottomNavigationView.ActiveIndicator"
-        app:itemHorizontalTranslationEnabled="true"
-        app:itemIconTint="@color/icon_colors"
-        app:itemRippleColor="@null"
-        app:itemTextAppearanceActive="@style/Theme.BottomNavigationView.ActiveText"
-        app:itemTextAppearanceActiveBoldEnabled="false"
-        app:itemTextAppearanceInactive="@style/Theme.BottomNavigationView.InactiveText"
-        app:itemTextColor="@color/text_colors"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/nav_menu" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:backgroundTint="@color/color_primary_variant"
+            app:compatShadowEnabled="true"
+            app:itemActiveIndicatorStyle="@style/Theme.BottomNavigationView.ActiveIndicator"
+            app:itemHorizontalTranslationEnabled="true"
+            app:itemIconTint="@color/icon_colors"
+            app:itemRippleColor="@null"
+            app:itemTextAppearanceActive="@style/Theme.BottomNavigationView.ActiveText"
+            app:itemTextAppearanceActiveBoldEnabled="false"
+            app:itemTextAppearanceInactive="@style/Theme.BottomNavigationView.InactiveText"
+            app:itemTextColor="@color/text_colors"
+            app:menu="@menu/nav_menu" />
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_primary_variant"
+            ads:adSize="FULL_BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id" />
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

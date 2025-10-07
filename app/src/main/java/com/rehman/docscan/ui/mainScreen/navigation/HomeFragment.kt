@@ -20,6 +20,7 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import com.rehman.docscan.R
 import com.rehman.docscan.core.Prefs
+import com.rehman.docscan.core.Toasty
 import com.rehman.docscan.core.Utils.getBitmapFromUri
 import com.rehman.docscan.core.Utils.saveImageToExternalStorage
 import com.rehman.docscan.core.Utils.saveImageToMediaStore
@@ -168,12 +169,16 @@ class HomeFragment : Fragment() {
 
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Log.e("Scanner", "Scan Result -> Cancelled...")
-            callback?.showSnackBar(
-                "Cancelled...",
-                R.color.color_error,
-                R.color.color_text_primary,
-                2000L
+            Toasty.show(
+                requireContext(), "Cancelled...", iconRes = R.drawable.ic_cross,
+                backgroundColor = R.color.color_error
             )
+//            callback?.showSnackBar(
+//                "Cancelled...",
+//                R.color.color_error,
+//                R.color.color_text_primary,
+//                2000L
+//            )
 
         } else {
             Log.e("Scanner", "Scan Result -> Failed...")

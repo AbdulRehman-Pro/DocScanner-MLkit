@@ -37,4 +37,7 @@
     <string name="downloaded_button">Restart now</string>
     <string name="update_tag">New Update</string>
     <string name="cancel">Cancel</string>
+    <string name="coins_available">Balance: %1$d — Ready to redeem!</string>
+    <string name="coins_not_available">Balance: %1$d — Earn more to unlock features.</string>
+    <string name="coins_empty">Oops! You don’t have any coins right now.</string>
 </resources>

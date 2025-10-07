@@ -40,6 +40,9 @@ android {
             isDebuggable = true
             applicationIdSuffix = ".debug"
             resValue("string", "app_name", "DocScan Debug")
+            resValue("string", "admob_app_id", "ca-app-pub-3940256099942544~3347511713") // Test App ID
+            resValue("string", "rewarded_ad_unit_id", "ca-app-pub-3940256099942544/5224354917") // Test Rewarded Ad Unit ID
+            resValue("string", "banner_ad_unit_id", "ca-app-pub-3940256099942544/9214589741") // Test Banner Ad Unit ID
             signingConfig = signingConfigs.getByName("debug")
 
         }
@@ -49,6 +52,9 @@ android {
             isShrinkResources = true
             isDebuggable = false
             resValue("string", "app_name", "DocScan")
+            resValue("string", "admob_app_id", "ca-app-pub-7556066480486531~3820559966") // Real App ID
+            resValue("string", "rewarded_ad_unit_id", "ca-app-pub-7556066480486531/5340790078") // Real Rewarded Ad Unit ID
+            resValue("string", "banner_ad_unit_id", "ca-app-pub-7556066480486531/9125790717") // Real Banner Ad Unit ID
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -117,6 +123,9 @@ dependencies {
 
     // Kotlin + coroutines
     implementation(libs.androidx.work.runtime.ktx)
+
+    // Ads
+    implementation(libs.play.services.ads)
 
 
 }

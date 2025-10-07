@@ -66,7 +66,7 @@ object Utils {
     const val APP_FOLDER_NAME = "DocScanner"
     const val APP_FOLDER_NAME_SHORT = "DS"
 
-    const val IS_PREMIUM = false
+    const val AD_COINS = 5
 
 
     fun Activity.showCustomSnackBar(

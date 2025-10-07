@@ -1,15 +1,12 @@
 package com.rehman.docscan.ui.mainScreen
 
 import android.Manifest
-import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,10 +14,12 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.rehman.docscan.R
+import com.rehman.docscan.core.AdsManager
 import com.rehman.docscan.core.InAppUpdateUtils
 import com.rehman.docscan.core.PermissionUtils.arePermissionGranted
-import com.rehman.docscan.core.PermissionUtils.requestPermission
 import com.rehman.docscan.core.Prefs
+import com.rehman.docscan.core.Toasty
+import com.rehman.docscan.core.Utils.enableTransition
 import com.rehman.docscan.core.Utils.openAppSettings
 import com.rehman.docscan.core.Utils.showCustomSnackBar
 import com.rehman.docscan.core.Utils.showPermissionDialog
@@ -51,14 +50,15 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
                 // ❌ User denied
                 Log.d("PermissionResult", "POST_NOTIFICATIONS denied")
                 // Optionally check if it's "Don't ask again"
-                val shouldShowRationale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        Manifest.permission.POST_NOTIFICATIONS
-                    )
-                } else {
-                    false
-                }
+                val shouldShowRationale =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        ActivityCompat.shouldShowRequestPermissionRationale(
+                            this,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        )
+                    } else {
+                        false
+                    }
                 if (!shouldShowRationale) {
                     Log.d("PermissionResult", "Don't ask again selected")
                     // Optionally guide user to app settings
@@ -68,19 +68,28 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(getColor(R.color.color_primary_variant)),
-            navigationBarStyle = SystemBarStyle.dark(getColor(R.color.color_primary_variant))
-        )
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.enableTransition()
 
+        // Initialize AdMob Banner Ad
+        AdsManager.loadBannerAd(binding.adView)
 
         // Initialize the In-App Update utils
+        initializeIAUpdate()
+
+        // Initialize the Bottom Navigation
+        initBottomNav()
+
+        // Handle back press
+        handleBackPress()
+
+
+    }
+
+    private fun initializeIAUpdate() {
         updateUtils = InAppUpdateUtils(
             context = this,
             resultLauncher = updateLauncher,
@@ -134,63 +143,9 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
                 }
             }
         }
-
-
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            if (!arePermissionGranted()) {
-//
-//                val isFirstTimeAsking = !Prefs.wasNotificationPermissionRequested
-//                if (isFirstTimeAsking) {
-//                    showPermissionDialog(
-//                        title = "Enable Notifications",
-//                        description = "We use notifications to alert you about updates and important events.",
-//                        positiveButton = "Allow",
-//                        positiveButtonClickListener = {
-//                            Prefs.wasNotificationPermissionRequested = true
-//                            requestPermission() // 🔁 now safe to ask
-//                        }
-//                    )
-//                } else {
-//                    if (ActivityCompat.shouldShowRequestPermissionRationale(
-//                            this,
-//                            Manifest.permission.POST_NOTIFICATIONS
-//                        )
-//                    ) {
-//                        // Denied once, but user didn’t check "Don't ask again"
-//                        showPermissionDialog(
-//                            title = "Enable Notifications",
-//                            description = "We use notifications to alert you about updates and important events.",
-//                            positiveButton = "Allow",
-//                            positiveButtonClickListener = {
-//                                requestPermission() // 🔁 now safe to ask
-//                            }
-//                        )
-//                    } else {
-//                        // "Don't ask again"
-//                        showPermissionDialog(
-//                            title = "Enable Notifications from Settings",
-//                            description = "Notification permission is permanently denied. Open settings to allow it manually.",
-//                            positiveButton = "Open Settings",
-//                            positiveButtonClickListener = {
-//                                openAppSettings()
-//                            }
-//                        )
-//                    }
-//                }
-//            }
-//        }
-
-
-
-        initBottomNav()
-        handleBackPress()
-
-
     }
 
     private fun initBottomNav() {
-
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
@@ -241,7 +196,13 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
                     } else {
                         doubleBackToExitPressedOnce = true
 
-                        showSnackBar("Press BACK again to exit")
+//                        showSnackBar("Press BACK again to exit")
+                        Toasty.show(
+                            this@MainActivity,
+                            "Press BACK again to exit",
+                            backgroundColor = R.color.color_secondary,
+                            textColor = R.color.color_on_secondary
+                        )
 
                         handler.postDelayed({
                             doubleBackToExitPressedOnce = false
@@ -254,16 +215,25 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         })
     }
 
+    override fun onPause() {
+        binding.adView.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.adView.resume()
+    }
 
     override fun onStop() {
         super.onStop()
-
         // Unregister the listener when the fragment is paused
         updateUtils.unregister()
     }
 
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
+        binding.adView.destroy()
         super.onDestroy()
     }
 
@@ -275,7 +245,7 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
     ) {
         this.showCustomSnackBar(
             message,
-            binding.bottomNavigationView,
+            binding.bottomLayout,
             backgroundColor,
             textColor,
             duration

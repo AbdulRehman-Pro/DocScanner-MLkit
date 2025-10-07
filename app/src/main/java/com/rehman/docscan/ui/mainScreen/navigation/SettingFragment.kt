@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.card.MaterialCardView
 import com.rehman.docscan.R
+import com.rehman.docscan.core.AdsManager
 import com.rehman.docscan.core.InAppUpdateUtils
 import com.rehman.docscan.core.Prefs
 import com.rehman.docscan.core.Utils
@@ -36,7 +38,6 @@ import com.rehman.docscan.databinding.FragmentSettingBinding
 class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
-
 
     override fun onResume() {
         super.onResume()
@@ -169,13 +170,25 @@ class SettingFragment : Fragment() {
             val dialogBinding = DialogModeSelectionBinding.inflate(layoutInflater)
             setContentView(dialogBinding.root)
 
-            if (!Utils.IS_PREMIUM) {
-                dialogBinding.advanceModeRadio.alpha = 0.5f
-                dialogBinding.burstModeRadio.alpha = 0.5f
-            } else {
-                dialogBinding.advanceModeRadio.alpha = 1f
-                dialogBinding.burstModeRadio.alpha = 1f
+            dialogBinding.root.post {
+                if (Prefs.getCoinBalance() >= 5) {
+                    dialogBinding.advanceModeRadio.alpha = 1f
+                    dialogBinding.burstModeRadio.alpha = 1f
+                } else {
+                    val isAdvanceChecked = dialogBinding.advanceModeRadio.isChecked
+                    val isBurstChecked = dialogBinding.burstModeRadio.isChecked
+
+                    Log.d("ModeAlphaDebug", "Coin balance < 5")
+                    Log.d("ModeAlphaDebug", "AdvanceMode isChecked: $isAdvanceChecked")
+                    Log.d("ModeAlphaDebug", "BurstMode isChecked: $isBurstChecked")
+
+                    dialogBinding.advanceModeRadio.alpha = if (isAdvanceChecked) 1f else 0.5f
+                    dialogBinding.burstModeRadio.alpha = if (isBurstChecked) 1f else 0.5f
+                }
             }
+
+
+
 
             if (type == "limit") {
                 dialogBinding.limitRadioGroup.visibility = View.VISIBLE
@@ -206,8 +219,8 @@ class SettingFragment : Fragment() {
                     val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
 
                     if (checkedId == R.id.burstModeRadio) {
-                        if (!Utils.IS_PREMIUM) {
-                            showPremiumDialog()
+                        if (Prefs.getCoinBalance() < 5) {
+                            showPremiumDialog(type)
                             dialogBinding.advanceModeRadio.isChecked = false
                             dismiss()
                             return@setOnCheckedChangeListener // Exit early, don't dismiss
@@ -215,6 +228,7 @@ class SettingFragment : Fragment() {
                             val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
                             val title = selectedText.substringBefore("\n")
                             Prefs.setImageLimit(title)
+                            Prefs.useCoins(5)
                             binding.limitModeText.text = title
                             dismiss()
                         }
@@ -262,12 +276,11 @@ class SettingFragment : Fragment() {
 
                 dialogBinding.modeRadioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
 
-
                     val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
 
                     if (checkedId == R.id.advanceModeRadio) {
-                        if (!Utils.IS_PREMIUM) {
-                            showPremiumDialog()
+                        if (Prefs.getCoinBalance() < 5) {
+                            showPremiumDialog(type)
                             dialogBinding.advanceModeRadio.isChecked = false
                             dismiss()
                             return@setOnCheckedChangeListener // Exit early, don't dismiss
@@ -275,6 +288,7 @@ class SettingFragment : Fragment() {
                             val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
                             val title = selectedText.substringBefore("\n")
                             Prefs.setScanMode(title)
+                            Prefs.useCoins(5)
                             binding.scanModeText.text = title
                             dismiss()
                         }
@@ -297,7 +311,6 @@ class SettingFragment : Fragment() {
                 addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
                 // Ensure visibility flags are set
-
                 WindowInsetsControllerCompat(this, this.decorView).let { controller ->
                     controller.hide(WindowInsetsCompat.Type.systemBars())
                     controller.systemBarsBehavior =
@@ -311,11 +324,38 @@ class SettingFragment : Fragment() {
 
     }
 
-    private fun showPremiumDialog() {
+    private fun showPremiumDialog(type: String) {
         Dialog(requireContext()).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val binding = DialogPremiumBinding.inflate(layoutInflater)
             setContentView(binding.root)
+
+            if (Prefs.getCoinBalance() == 0) {
+                binding.coinsAvailable.text = getString(R.string.coins_empty)
+            } else if (Prefs.getCoinBalance() < 5) {
+                binding.coinsAvailable.text =
+                    getString(R.string.coins_not_available, Prefs.getCoinBalance())
+            } else {
+                binding.coinsAvailable.text =
+                    getString(R.string.coins_available, Prefs.getCoinBalance())
+            }
+
+            binding.watchAdCard.setOnClickListener {
+
+                AdsManager.showRewardedAd(requireActivity()) { coins ->
+                    // Handle reward here
+                    Prefs.addCoins(coins)
+
+                    dismiss()
+
+                    if (type == "limit") {
+                        openDialog("limit")
+                    } else {
+                        openDialog("mode")
+                    }
+
+                }
+            }
 
 
 
@@ -326,7 +366,6 @@ class SettingFragment : Fragment() {
                 attributes.windowAnimations = R.style.DialogAnimation
                 setGravity(Gravity.BOTTOM)
                 addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
 
                 WindowInsetsControllerCompat(this, this.decorView).let { controller ->
                     controller.hide(WindowInsetsCompat.Type.systemBars())

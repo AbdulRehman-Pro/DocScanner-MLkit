@@ -41,7 +41,7 @@ object Prefs {
     fun getImageLimit(context: Context): String = sharedPrefs.getString("imageLimit", context.getString(R.string.single_mode)).toString()
 
 
-    fun removeImageLimit(context: Context) {
+    fun removeImageLimit() {
         sharedPrefs.edit() { remove("imageLimit") }
     }
 
@@ -65,6 +65,29 @@ object Prefs {
         set(value) {
             sharedPrefs.edit() { putBoolean("notify_permission_asked", value) }
         }
+
+
+    fun isPremiumUnlocked() = sharedPrefs.getBoolean("is_premium_unlocked", false)
+
+    fun setPremiumUnlocked() {
+        sharedPrefs.edit() { putBoolean("is_premium_unlocked", true) }
+    }
+
+    fun getCoinBalance() = sharedPrefs.getInt("coin_balance", 0)
+
+    fun addCoins(amount: Int) {
+        val newBalance = getCoinBalance() + amount
+        sharedPrefs.edit() { putInt("coin_balance", newBalance) }
+    }
+
+    fun useCoins(cost: Int): Boolean {
+        val current = getCoinBalance()
+        return if (current >= cost) {
+            sharedPrefs.edit() { putInt("coin_balance", current - cost) }
+            true
+        } else false
+    }
+
 
 
 

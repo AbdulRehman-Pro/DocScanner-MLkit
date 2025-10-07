@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:background="@color/color_primary"
     android:orientation="vertical"
-    android:animateLayoutChanges="true"
     tools:context=".ui.mainScreen.navigation.SettingFragment">
 
 
@@ -246,37 +246,24 @@
             app:cardCornerRadius="@dimen/_15sdp"
             app:cardElevation="0dp">
 
-            <LinearLayout
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/importSwitch"
+                style="@style/SwitchStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/_5sdp"
-                android:paddingBottom="@dimen/_5sdp">
+                android:layout_weight="1"
+                android:checked="false"
+                android:drawableStart="@drawable/ic_gallery"
+                android:drawablePadding="@dimen/_10sdp"
+                android:fontFamily="@font/roboto_bold"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_5sdp"
+                android:text="@string/import_from_gallery"
+                android:textColor="@color/color_text_primary"
+                android:textSize="@dimen/_12ssp"
+                app:trackDecorationTint="@color/track_decoration_tint" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:contentDescription="@string/content_description"
-                    android:src="@drawable/ic_gallery"
-                    app:tint="@color/color_on_primary" />
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/importSwitch"
-                    style="@style/SwitchStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="false"
-                    android:fontFamily="@font/roboto_bold"
-                    android:paddingStart="@dimen/_10sdp"
-                    android:paddingEnd="@dimen/_10sdp"
-                    android:text="@string/import_from_gallery"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="@dimen/_12ssp"
-                    app:trackDecorationTint="@color/track_decoration_tint" />
-            </LinearLayout>
 
         </androidx.cardview.widget.CardView>
 
@@ -335,22 +322,20 @@
 
                         <TextView
                             android:id="@+id/updateTag"
-                            android:background="@drawable/update_tag"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:background="@drawable/update_tag"
                             android:fontFamily="@font/roboto_bold"
-                            android:paddingVertical="@dimen/_2sdp"
-                            android:paddingHorizontal="@dimen/_5sdp"
-                            android:visibility="gone"
                             android:includeFontPadding="false"
+                            android:paddingHorizontal="@dimen/_5sdp"
+                            android:paddingVertical="@dimen/_2sdp"
                             android:text="@string/update_tag"
                             android:textColor="@color/color_primary_variant"
-                            android:textSize="@dimen/_8ssp" />
-
+                            android:textSize="@dimen/_8ssp"
+                            android:visibility="gone" />
 
 
                     </LinearLayout>
-
 
 
                     <TextView

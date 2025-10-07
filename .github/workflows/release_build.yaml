@@ -54,7 +54,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_AUTH_JSON_PLAIN_TEXT }}
           packageName: com.rehman.docscan
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          track: internal
+          track: production
           status: completed
           inAppUpdatePriority: 3
           whatsNewDirectory: distribution/whatsNew
