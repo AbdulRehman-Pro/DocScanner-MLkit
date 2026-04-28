@@ -34,7 +34,7 @@
         android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:fontFamily="@font/roboto"
-        android:text="This feature is part of our premium experience. You can unlock it forever or use your earned coins for temporary access.\n\nDon’t have enough coins?\nWatch a short video to earn more."
+        android:text="This feature is part of our premium experience. Use your earned coins for access.\n\nDon’t have enough coins?\nWatch a short video to earn more."
         android:textAlignment="center"
         android:textColor="@color/color_text_secondary"
         android:textSize="@dimen/_10sdp" />
@@ -64,6 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_70sdp"
         android:layout_marginHorizontal="@dimen/_10sdp"
+        android:visibility="gone"
         android:background="@drawable/pro_golden_bg"
         android:orientation="horizontal">
 

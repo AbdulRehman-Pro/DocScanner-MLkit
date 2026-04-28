@@ -69,11 +69,13 @@ object AdsManager {
                 }
 
                 override fun onAdFailedToShowFullScreenContent(error: AdError) {
+                    rewardedAd = null
                     Toast.makeText(
                         activity,
                         "Unable to display ad: ${error.message}",
                         Toast.LENGTH_SHORT
                     ).show()
+                    loadRewardedAd(activity.applicationContext)
                 }
             }
 

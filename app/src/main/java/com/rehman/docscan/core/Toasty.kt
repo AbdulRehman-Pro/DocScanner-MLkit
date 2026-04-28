@@ -98,16 +98,17 @@ object Toasty {
 
         currentPopup = popupWindow
 
-        // Get root view to attach the popup
+        // Attach to the decor view and keep the toast inside the visible window.
         val parentView = (context as Activity).window.decorView.rootView
-
-        // Position: bottom center
-        val location = IntArray(2)
-        parentView.getLocationOnScreen(location)
-        val yOffset = parentView.height
+        val bottomOffset = dpToPxInt(context, 32)
 
         // Show popup
-        popupWindow.showAtLocation(parentView, Gravity.CENTER_HORIZONTAL, 0, yOffset.toInt())
+        popupWindow.showAtLocation(
+            parentView,
+            Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL,
+            0,
+            bottomOffset
+        )
 
         // Slide-in animation
         val animIn = AnimationUtils.loadAnimation(context, R.anim.toast_in)
@@ -137,7 +138,10 @@ object Toasty {
         )
     }
 
-}
+    private fun dpToPxInt(context: Context, dp: Int): Int {
+        return dpToPxFloat(context, dp).toInt()
+    }
 
+}
 
 
