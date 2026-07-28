@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.RadioButton
+import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
@@ -22,8 +23,10 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.card.MaterialCardView
 import com.rehman.docscan.R
 import com.rehman.docscan.core.AdsManager
+import com.rehman.docscan.core.BillingManager
 import com.rehman.docscan.core.InAppUpdateUtils
 import com.rehman.docscan.core.Prefs
+import com.rehman.docscan.core.Toasty
 import com.rehman.docscan.core.Utils
 import com.rehman.docscan.core.Utils.applyCustomColor
 import com.rehman.docscan.core.Utils.enableTransition
@@ -34,6 +37,7 @@ import com.rehman.docscan.core.Utils.toggleCardDetails
 import com.rehman.docscan.databinding.DialogModeSelectionBinding
 import com.rehman.docscan.databinding.DialogPremiumBinding
 import com.rehman.docscan.databinding.FragmentSettingBinding
+import com.rehman.docscan.ui.mainScreen.MainActivity
 
 class SettingFragment : Fragment() {
 
@@ -80,6 +84,10 @@ class SettingFragment : Fragment() {
 
         binding.importSwitch.setOnCheckedChangeListener { _, isChecked ->
             Prefs.setImportFromGallery(isChecked)
+        }
+
+        binding.premiumCard.setOnClickListener {
+            showPremiumDialog()
         }
 
 
@@ -138,9 +146,20 @@ class SettingFragment : Fragment() {
         }
 
         binding.importSwitch.isChecked = Prefs.getImportFromGallery()
+        renderPremiumState()
 
         binding.updateTag.visibility =
             if (InAppUpdateUtils.UPDATE_AVAILABLE) View.VISIBLE else View.GONE
+    }
+
+    private fun renderPremiumState() {
+        if (Prefs.isPremiumUnlocked()) {
+            binding.premiumTitle.text = getString(R.string.premium_active_title)
+            binding.premiumDescription.text = getString(R.string.premium_active_description)
+        } else {
+            binding.premiumTitle.text = getString(R.string.premium_card_title)
+            binding.premiumDescription.text = getString(R.string.premium_card_description)
+        }
     }
 
     private fun MaterialCardView.animateStrokeColorLoop(
@@ -171,7 +190,7 @@ class SettingFragment : Fragment() {
             setContentView(dialogBinding.root)
 
             dialogBinding.root.post {
-                if (Prefs.getCoinBalance() >= 5) {
+                if (Prefs.isPremiumUnlocked() || Prefs.getCoinBalance() >= 5) {
                     dialogBinding.advanceModeRadio.alpha = 1f
                     dialogBinding.burstModeRadio.alpha = 1f
                 } else {
@@ -219,7 +238,7 @@ class SettingFragment : Fragment() {
                     val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
 
                     if (checkedId == R.id.burstModeRadio) {
-                        if (Prefs.getCoinBalance() < 5) {
+                        if (!Prefs.isPremiumUnlocked() && Prefs.getCoinBalance() < 5) {
                             showPremiumDialog(type)
                             dialogBinding.advanceModeRadio.isChecked = false
                             dismiss()
@@ -228,7 +247,9 @@ class SettingFragment : Fragment() {
                             val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
                             val title = selectedText.substringBefore("\n")
                             Prefs.setImageLimit(title)
-                            Prefs.useCoins(5)
+                            if (!Prefs.isPremiumUnlocked()) {
+                                Prefs.useCoins(5)
+                            }
                             binding.limitModeText.text = title
                             dismiss()
                         }
@@ -279,7 +300,7 @@ class SettingFragment : Fragment() {
                     val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
 
                     if (checkedId == R.id.advanceModeRadio) {
-                        if (Prefs.getCoinBalance() < 5) {
+                        if (!Prefs.isPremiumUnlocked() && Prefs.getCoinBalance() < 5) {
                             showPremiumDialog(type)
                             dialogBinding.advanceModeRadio.isChecked = false
                             dismiss()
@@ -288,7 +309,9 @@ class SettingFragment : Fragment() {
                             val selectedText = selectedRadioButton?.text?.toString() ?: "Unknown"
                             val title = selectedText.substringBefore("\n")
                             Prefs.setScanMode(title)
-                            Prefs.useCoins(5)
+                            if (!Prefs.isPremiumUnlocked()) {
+                                Prefs.useCoins(5)
+                            }
                             binding.scanModeText.text = title
                             dismiss()
                         }
@@ -324,13 +347,15 @@ class SettingFragment : Fragment() {
 
     }
 
-    private fun showPremiumDialog(type: String) {
+    private fun showPremiumDialog(type: String? = null) {
         Dialog(requireContext()).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val binding = DialogPremiumBinding.inflate(layoutInflater)
             setContentView(binding.root)
 
-            if (Prefs.getCoinBalance() == 0) {
+            if (Prefs.isPremiumUnlocked()) {
+                binding.coinsAvailable.text = getString(R.string.premium_active_description)
+            } else if (Prefs.getCoinBalance() == 0) {
                 binding.coinsAvailable.text = getString(R.string.coins_empty)
             } else if (Prefs.getCoinBalance() < 5) {
                 binding.coinsAvailable.text =
@@ -340,20 +365,86 @@ class SettingFragment : Fragment() {
                     getString(R.string.coins_available, Prefs.getCoinBalance())
             }
 
+            binding.watchAdCard.visibility =
+                if (Prefs.isPremiumUnlocked()) View.GONE else View.VISIBLE
+
+            BillingManager.getPremiumPrice { price ->
+                binding.buyPremiumPrice.text = price ?: getString(R.string.premium_price_fallback)
+            }
+
+            binding.buyPremiumCard.setOnClickListener {
+//                if (Prefs.isPremiumUnlocked()) return@setOnClickListener
+                Log.d("BillingManager","BillingManager cal")
+
+                BillingManager.launchPremiumPurchase(requireActivity()) { result ->
+                    Log.d("BillingManager","BillingManager: $result")
+                    when (result) {
+                        is BillingManager.PurchaseResult.Success -> {
+                            Prefs.setPremiumUnlocked(true)
+                            renderPremiumState()
+                            (activity as? MainActivity)?.refreshPremiumUi(true)
+                            Toast.makeText(requireContext(),getString(R.string.premium_purchase_success) , Toast.LENGTH_SHORT).show()
+                            dismiss()
+                            reopenLockedDialog(type)
+                        }
+
+                        is BillingManager.PurchaseResult.Cancelled -> {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.premium_purchase_cancelled),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        is BillingManager.PurchaseResult.Error -> {
+                            Toast.makeText(
+                                requireContext(),
+                                result.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+            }
+
+            binding.restorePurchaseCard.setOnClickListener {
+                BillingManager.restorePurchases { result ->
+                    when (result) {
+                        is BillingManager.PurchaseResult.Success -> {
+                            Prefs.setPremiumUnlocked(true)
+                            renderPremiumState()
+                            (activity as? MainActivity)?.refreshPremiumUi(true)
+                            Toasty.show(
+                                requireContext(),
+                                getString(R.string.premium_restore_success),
+                                backgroundColor = R.color.color_secondary,
+                                textColor = R.color.color_on_secondary
+                            )
+                            dismiss()
+                            reopenLockedDialog(type)
+                        }
+
+                        BillingManager.PurchaseResult.Cancelled -> Unit
+
+                        is BillingManager.PurchaseResult.Error -> {
+                            Toasty.show(
+                                requireContext(),
+                                result.message,
+                                iconRes = R.drawable.ic_cross,
+                                backgroundColor = R.color.color_error
+                            )
+                        }
+                    }
+                }
+            }
+
             binding.watchAdCard.setOnClickListener {
 
                 AdsManager.showRewardedAd(requireActivity()) { coins ->
-                    // Handle reward here
                     Prefs.addCoins(coins)
 
                     dismiss()
-
-                    if (type == "limit") {
-                        openDialog("limit")
-                    } else {
-                        openDialog("mode")
-                    }
-
+                    reopenLockedDialog(type)
                 }
             }
 
@@ -375,6 +466,14 @@ class SettingFragment : Fragment() {
             }
 
             show()
+        }
+    }
+
+    private fun reopenLockedDialog(type: String?) {
+        if (type == "limit") {
+            openDialog("limit")
+        } else if (type == "mode") {
+            openDialog("mode")
         }
     }
 

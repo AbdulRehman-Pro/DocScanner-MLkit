@@ -15,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.rehman.docscan.R
 import com.rehman.docscan.core.AdsManager
+import com.rehman.docscan.core.BillingManager
 import com.rehman.docscan.core.InAppUpdateUtils
 import com.rehman.docscan.core.PermissionUtils.arePermissionGranted
 import com.rehman.docscan.core.Prefs
@@ -74,8 +75,8 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         setContentView(binding.root)
         binding.root.enableTransition()
 
-        // Initialize AdMob Banner Ad
-        AdsManager.loadBannerAd(binding.adView)
+        BillingManager.initialize(applicationContext) { refreshPremiumUi(it) }
+        refreshPremiumUi(Prefs.isPremiumUnlocked())
 
         // Initialize the In-App Update utils
         initializeIAUpdate()
@@ -222,6 +223,7 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
 
     override fun onResume() {
         super.onResume()
+        refreshPremiumUi(Prefs.isPremiumUnlocked())
         binding.adView.resume()
     }
 
@@ -235,6 +237,15 @@ class MainActivity : AppCompatActivity(), SnackBarListener {
         handler.removeCallbacksAndMessages(null)
         binding.adView.destroy()
         super.onDestroy()
+    }
+
+    fun refreshPremiumUi(isPremium: Boolean = Prefs.isPremiumUnlocked()) {
+        if (isPremium) {
+            binding.adView.visibility = android.view.View.GONE
+            return
+        }
+
+        AdsManager.loadBannerAd(binding.adView)
     }
 
     override fun showSnackBar(

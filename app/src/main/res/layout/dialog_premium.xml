@@ -34,7 +34,7 @@
         android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:fontFamily="@font/roboto"
-        android:text="This feature is part of our premium experience. Use your earned coins for access.\n\nDon’t have enough coins?\nWatch a short video to earn more."
+        android:text="@string/premium_dialog_description"
         android:textAlignment="center"
         android:textColor="@color/color_text_secondary"
         android:textSize="@dimen/_10sdp" />
@@ -61,10 +61,10 @@
         android:background="@color/color_on_primary" />
 
     <RelativeLayout
+        android:id="@+id/buyPremiumCard"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_70sdp"
         android:layout_marginHorizontal="@dimen/_10sdp"
-        android:visibility="gone"
         android:background="@drawable/pro_golden_bg"
         android:orientation="horizontal">
 
@@ -142,7 +142,109 @@
                 android:layout_below="@id/proView"
                 android:alpha="0.8"
                 android:fontFamily="@font/roboto"
-                android:text="Gain lifetime access"
+                android:text="@string/premium_buy_description"
+                android:textColor="@color/color_text_primary"
+                android:textSize="@dimen/_10sdp" />
+
+            <TextView
+                android:id="@+id/buyPremiumPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/proView"
+                android:alpha="0.8"
+                android:fontFamily="@font/roboto_bold"
+                android:text="@string/premium_price_fallback"
+                android:textColor="@color/color_text_primary"
+                android:textSize="@dimen/_12sdp" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/restorePurchaseCard"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@drawable/ic_mode_bg"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_minus45sdp"
+            android:alpha="0.1"
+            android:rotation="345"
+            android:src="@drawable/ic_update"
+            app:tint="@color/color_on_primary" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/restoreGoView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_10sdp"
+            app:cardBackgroundColor="@color/color_on_primary"
+            app:cardCornerRadius="@dimen/_30sdp"
+            app:cardElevation="0dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:fontFamily="@font/roboto_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/restore"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/_14ssp" />
+        </androidx.cardview.widget.CardView>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_toStartOf="@id/restoreGoView">
+
+            <TextView
+                android:id="@+id/restoreTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:fontFamily="@font/roboto_bold"
+                android:text="@string/premium_restore_title"
+                android:textColor="@color/color_text_primary"
+                android:textSize="@dimen/_16sdp" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_below="@id/restoreTitle"
+                android:layout_alignEnd="@id/restoreTitle"
+                android:layout_alignParentStart="true"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:alpha="0.8"
+                android:background="@color/color_on_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/restoreTitle"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:alpha="0.8"
+                android:fontFamily="@font/roboto"
+                android:text="@string/premium_restore_description"
                 android:textColor="@color/color_text_primary"
                 android:textSize="@dimen/_10sdp" />
 
@@ -233,7 +335,7 @@
                 android:layout_below="@id/adView"
                 android:alpha="0.8"
                 android:fontFamily="@font/roboto"
-                android:text="Use 3 coins for temporary access"
+                android:text="@string/premium_watch_ad_description"
                 android:textColor="@color/color_text_primary"
                 android:textSize="@dimen/_10sdp" />
 

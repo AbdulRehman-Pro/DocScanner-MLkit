@@ -3,6 +3,7 @@ package com.rehman.docscan.core
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -18,16 +19,21 @@ object AdsManager {
 
     private var rewardedAd: RewardedAd? = null
     private var isLoading = false
+    private var isInitialized = false
     private const val TAG = "AdsManager"
 
     fun initializeAdMob(context: Context) {
+        if (Prefs.isPremiumUnlocked() || isInitialized) return
+
         MobileAds.initialize(context){
             Log.d(TAG, "AdMob initialized")
         }
+        isInitialized = true
         loadRewardedAd(context)
     }
 
     fun loadRewardedAd(context: Context) {
+        if (Prefs.isPremiumUnlocked()) return
         if (isLoading || rewardedAd != null) return
 
         isLoading = true
@@ -57,6 +63,7 @@ object AdsManager {
     }
 
     fun showRewardedAd(activity: Activity, onUserEarnedReward: (Int) -> Unit) {
+        if (Prefs.isPremiumUnlocked()) return
         val ad = rewardedAd
         if (ad != null) {
             ad.fullScreenContentCallback = object : FullScreenContentCallback() {
@@ -90,7 +97,14 @@ object AdsManager {
     }
 
     fun loadBannerAd(adView: AdView) {
+        if (Prefs.isPremiumUnlocked()) {
+            adView.visibility = View.GONE
+            return
+        }
+
+        initializeAdMob(adView.context.applicationContext)
         val adRequest = AdRequest.Builder().build()
+        adView.visibility = View.VISIBLE
         adView.loadAd(adRequest)
     }
 }

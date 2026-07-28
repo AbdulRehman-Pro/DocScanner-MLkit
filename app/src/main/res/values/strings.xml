@@ -40,4 +40,18 @@
     <string name="coins_available">Balance: %1$d — Ready to redeem!</string>
     <string name="coins_not_available">Balance: %1$d — Earn more to unlock features.</string>
     <string name="coins_empty">Oops! You don’t have any coins right now.</string>
+    <string name="premium_card_title">Unlock Premium</string>
+    <string name="premium_card_description">Remove ads permanently and unlock all scan modes and limits.</string>
+    <string name="premium_active_title">Premium Active</string>
+    <string name="premium_active_description">Ads are removed and every mode is permanently unlocked on this account.</string>
+    <string name="premium_dialog_description">Buy Premium once to remove banners, skip rewarded ads, and keep every advanced mode unlocked forever. You can also restore an existing purchase below.</string>
+    <string name="premium_buy_description">Gain lifetime access</string>
+    <string name="premium_restore_title">Restore Purchase</string>
+    <string name="premium_restore_description">Already bought Premium? Restore it on this device.</string>
+    <string name="premium_watch_ad_description">Use 5 coins for temporary access</string>
+    <string name="premium_price_fallback">Lifetime</string>
+    <string name="restore">Restore</string>
+    <string name="premium_purchase_success">Premium unlocked permanently.</string>
+    <string name="premium_purchase_cancelled">Purchase cancelled.</string>
+    <string name="premium_restore_success">Premium purchase restored.</string>
 </resources>

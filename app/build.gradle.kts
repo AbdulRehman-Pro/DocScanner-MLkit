@@ -15,6 +15,7 @@ android {
         targetSdk = 35
         versionCode = 19
         versionName = "1.1.8"
+        buildConfigField("String", "PREMIUM_PRODUCT_ID", "\"docscan_premium\"")
 
         // Update what's new notes in distribution/whatsNew/whatsnew-en-US
 
@@ -126,6 +127,9 @@ dependencies {
 
     // Ads
     implementation(libs.play.services.ads)
+
+    // Play Billing
+    implementation(libs.play.billing.ktx)
 
 
 }

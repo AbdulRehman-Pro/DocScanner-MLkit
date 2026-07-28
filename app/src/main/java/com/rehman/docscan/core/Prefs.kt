@@ -69,8 +69,8 @@ object Prefs {
 
     fun isPremiumUnlocked() = sharedPrefs.getBoolean("is_premium_unlocked", false)
 
-    fun setPremiumUnlocked() {
-        sharedPrefs.edit() { putBoolean("is_premium_unlocked", true) }
+    fun setPremiumUnlocked(isUnlocked: Boolean) {
+        sharedPrefs.edit() { putBoolean("is_premium_unlocked", isUnlocked) }
     }
 
     fun getCoinBalance() = sharedPrefs.getInt("coin_balance", 0)
